@@ -35,7 +35,7 @@ app.get("/api/health", (_req, res) => {
     status: "ok",
     aiAvailable: hasKey,
     mode: "SIMULATED_SOCIAL_STREAM",
-    version: "1.0.0-SIH-PROTOTYPE",
+    version: "2.4.0",
   });
 });
 

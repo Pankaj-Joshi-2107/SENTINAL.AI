@@ -61,52 +61,55 @@ export const ThreatSimulationModal: React.FC<ThreatSimulationModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="bg-[#151B2E] border border-[#253149] rounded-2xl w-full max-w-2xl shadow-2xl overflow-hidden flex flex-col">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-in fade-in duration-200" style={{ background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(4px)' }}>
+      <div className="w-full max-w-2xl overflow-hidden flex flex-col rounded-xl" style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)' }}>
         {/* Header */}
-        <div className="p-5 border-b border-[#253149] flex items-center justify-between bg-[#1D2638]">
+        <div className="p-5 flex items-center justify-between" style={{ borderBottom: '1px solid var(--border)', background: 'var(--bg-elevated)' }}>
           <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-lg bg-red-500/15 text-[#F87171] border border-red-500/30">
+            <div className="p-2 rounded-md" style={{ background: 'var(--sev-critical-bg)', color: 'var(--sev-critical)' }}>
               <ShieldAlert className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-base font-bold text-[#F8FAFC] flex items-center gap-2">
-                RUN THREAT SIMULATION
-                <span className="text-xs font-mono font-normal px-2 py-0.5 rounded bg-blue-500/15 text-[#4F7CFF] border border-blue-500/30">
-                  SCENARIO C
+              <h3 className="text-sm font-semibold flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
+                Threat Simulation
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded" style={{ background: 'var(--accent-subtle)', color: 'var(--accent)', border: '1px solid var(--accent-border)' }}>
+                  Scenario C
                 </span>
               </h3>
-              <p className="text-xs text-[#94A3B8]">
-                Demonstrates real-time correlation of social stream, sentiment, behavioral bursts, and coordination scoring.
+              <p className="text-[11px] mt-0.5" style={{ color: 'var(--text-muted)' }}>
+                Demonstrates real-time correlation: stream, sentiment, behavioral bursts, and coordination scoring.
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-[#94A3B8] hover:text-[#F8FAFC] hover:bg-[#253149] transition-colors"
+            className="p-1.5 rounded-md transition-colors"
+            style={{ color: 'var(--text-muted)' }}
+            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = 'var(--text-primary)'; (e.currentTarget as HTMLElement).style.background = 'var(--bg-hover)'; }}
+            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'var(--text-muted)'; (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Body */}
-        <div className="p-6 space-y-6">
+        <div className="p-5 space-y-5">
           {/* Progress Bar */}
           <div>
-            <div className="flex justify-between text-xs font-mono text-[#94A3B8] mb-2">
-              <span>PIPELINE EXECUTION PROGRESS</span>
+            <div className="flex justify-between text-[11px] font-mono mb-2" style={{ color: 'var(--text-muted)' }}>
+              <span>Pipeline execution</span>
               <span>{Math.round((currentStep / 7) * 100)}%</span>
             </div>
-            <div className="w-full h-2 bg-[#111827] rounded-full overflow-hidden border border-[#253149]">
+            <div className="w-full h-1.5 rounded-full overflow-hidden" style={{ background: 'var(--bg-elevated)' }}>
               <div
-                className="h-full bg-gradient-to-r from-[#4F7CFF] via-[#8B5CF6] to-[#F87171] transition-all duration-300"
-                style={{ width: `${(currentStep / 7) * 100}%` }}
+                className="h-full rounded-full transition-all duration-300"
+                style={{ width: `${(currentStep / 7) * 100}%`, background: 'var(--accent)' }}
               />
             </div>
           </div>
 
           {/* Stepper Display */}
-          <div className="space-y-2.5 bg-[#111827] border border-[#253149] rounded-xl p-4 max-h-[300px] overflow-y-auto">
+          <div className="space-y-2 rounded-lg p-4 max-h-[280px] overflow-y-auto" style={{ background: 'var(--bg-base)', border: '1px solid var(--border)' }}>
             {STEPS.map((step) => {
               const isPast = currentStep > step.id;
               const isCurrent = currentStep === step.id;
@@ -115,37 +118,36 @@ export const ThreatSimulationModal: React.FC<ThreatSimulationModalProps> = ({
               return (
                 <div
                   key={step.id}
-                  className={`flex items-start gap-3 p-2.5 rounded-lg border transition-all ${
-                    isCurrent
-                      ? "bg-[#1D2638] border-[#4F7CFF] text-[#F8FAFC]"
-                      : isPast
-                      ? "bg-[#151B2E]/70 border-[#253149] text-[#94A3B8]"
-                      : "opacity-40 border-transparent text-slate-500"
-                  }`}
+                  className="flex items-start gap-3 p-2.5 rounded-md transition-all"
+                  style={{
+                    background: isCurrent ? 'var(--bg-elevated)' : 'transparent',
+                    border: `1px solid ${isCurrent ? 'var(--accent-border)' : 'transparent'}`,
+                    opacity: isPending ? 0.4 : 1,
+                  }}
                 >
                   <div className="mt-0.5 shrink-0">
                     {isPast ? (
-                      <CheckCircle2 className="w-4 h-4 text-[#34D399]" />
+                      <CheckCircle2 className="w-4 h-4" style={{ color: 'var(--sev-low)' }} />
                     ) : isCurrent ? (
-                      <Activity className="w-4 h-4 text-[#4F7CFF] animate-spin" />
+                      <Activity className="w-4 h-4 animate-spin" style={{ color: 'var(--accent)' }} />
                     ) : (
-                      <div className="w-4 h-4 rounded-full border border-slate-600 flex items-center justify-center text-[9px] font-mono">
+                      <div className="w-4 h-4 rounded-full border flex items-center justify-center text-[9px] font-mono" style={{ borderColor: 'var(--border)', color: 'var(--text-muted)' }}>
                         {step.id}
                       </div>
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="text-xs font-semibold flex items-center justify-between">
-                      <span className={isCurrent ? "text-[#22D3EE]" : ""}>
+                    <div className="text-[12px] font-semibold flex items-center justify-between">
+                      <span style={{ color: isCurrent ? 'var(--accent)' : isPast ? 'var(--text-primary)' : 'var(--text-muted)' }}>
                         Step {step.id}: {step.label}
                       </span>
                       {isCurrent && (
-                        <span className="text-[10px] font-mono uppercase bg-[#4F7CFF]/20 text-[#4F7CFF] px-1.5 py-0.2 rounded">
+                        <span className="text-[10px] font-mono px-1.5 py-0.5 rounded" style={{ background: 'var(--accent-subtle)', color: 'var(--accent)' }}>
                           Processing
                         </span>
                       )}
                     </div>
-                    <p className="text-[11px] text-[#94A3B8] mt-0.5 leading-normal">
+                    <p className="text-[11px] mt-0.5 leading-relaxed" style={{ color: 'var(--text-muted)' }}>
                       {step.desc}
                     </p>
                   </div>
@@ -156,83 +158,83 @@ export const ThreatSimulationModal: React.FC<ThreatSimulationModalProps> = ({
 
           {/* Result Banner when finished */}
           {isFinished && (
-            <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/40 animate-in zoom-in-95 duration-200">
+            <div className="p-4 rounded-lg animate-in zoom-in-95 duration-200" style={{ background: 'var(--sev-critical-bg)', border: '1px solid var(--sev-critical-bd)' }}>
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
-                  <AlertTriangle className="w-5 h-5 text-[#F87171] animate-bounce" />
-                  <span className="text-sm font-bold text-[#F87171] tracking-wide">
-                    ⚠ COORDINATED ACTIVITY DETECTED
+                  <AlertTriangle className="w-4 h-4" style={{ color: 'var(--sev-critical)' }} />
+                  <span className="text-[13px] font-semibold" style={{ color: 'var(--sev-critical)' }}>
+                    ⚠ Coordinated activity detected
                   </span>
                 </div>
                 <ThreatBadge level="CRITICAL" showScore={87} />
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2 border-t border-red-500/20 text-center font-mono">
-                <div className="bg-[#151B2E] p-2 rounded-lg border border-[#253149]">
-                  <span className="text-[10px] text-[#94A3B8] block">COORDINATION</span>
-                  <span className="text-base font-bold text-[#F87171]">92%</span>
-                </div>
-                <div className="bg-[#151B2E] p-2 rounded-lg border border-[#253149]">
-                  <span className="text-[10px] text-[#94A3B8] block">THREAT SCORE</span>
-                  <span className="text-base font-bold text-[#F87171]">87 / 100</span>
-                </div>
-                <div className="bg-[#151B2E] p-2 rounded-lg border border-[#253149]">
-                  <span className="text-[10px] text-[#94A3B8] block">ACCOUNTS INVOLVED</span>
-                  <span className="text-base font-bold text-[#F8FAFC]">8</span>
-                </div>
-                <div className="bg-[#151B2E] p-2 rounded-lg border border-[#253149]">
-                  <span className="text-[10px] text-[#94A3B8] block">BURST WINDOW</span>
-                  <span className="text-base font-bold text-[#22D3EE]">5 mins</span>
-                </div>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2 text-center font-mono" style={{ borderTop: '1px solid var(--sev-critical-bd)' }}>
+                {[
+                  { label: 'Coordination', val: '92%', color: 'var(--sev-critical)' },
+                  { label: 'Threat score', val: '87 / 100', color: 'var(--sev-critical)' },
+                  { label: 'Accounts', val: '8', color: 'var(--text-primary)' },
+                  { label: 'Burst window', val: '5 mins', color: 'var(--accent)' },
+                ].map(stat => (
+                  <div key={stat.label} className="p-2 rounded-md" style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)' }}>
+                    <span className="text-[10px] block mb-0.5" style={{ color: 'var(--text-muted)' }}>{stat.label}</span>
+                    <span className="text-base font-bold" style={{ color: stat.color }}>{stat.val}</span>
+                  </div>
+                ))}
               </div>
 
-              <p className="mt-3 text-xs text-[#94A3B8]">
-                Disinformation burst identified using identical hashtag cluster (<span className="text-[#22D3EE]">#CleanEnergyHoax</span>) and obfuscated bit.ly link targets.
+              <p className="mt-3 text-[11px] leading-relaxed" style={{ color: 'var(--text-muted)' }}>
+                Disinformation burst identified using identical hashtag cluster (<span style={{ color: 'var(--accent)' }}>#CleanEnergyHoax</span>) and obfuscated bit.ly link targets.
               </p>
             </div>
           )}
         </div>
 
         {/* Footer */}
-        <div className="p-5 border-t border-[#253149] bg-[#1D2638] flex items-center justify-between">
-          <span className="text-xs text-[#94A3B8] font-mono">
-            Mode: Synthetic Stream Injection
-          </span>
-          <div className="flex items-center gap-3">
+        <div className="p-4 flex items-center justify-between" style={{ borderTop: '1px solid var(--border)', background: 'var(--bg-elevated)' }}>
+          <span className="text-[11px] font-mono" style={{ color: 'var(--text-muted)' }}>Mode: Synthetic stream injection</span>
+          <div className="flex items-center gap-2">
             {!isRunning && !isFinished ? (
               <button
                 id="btn-trigger-simulation"
                 onClick={startSimulation}
-                className="px-5 py-2.5 rounded-lg bg-[#4F7CFF] hover:bg-[#4F7CFF]/90 text-white text-xs font-bold flex items-center gap-2 shadow-lg shadow-blue-500/20 transition-all cursor-pointer"
+                className="px-4 py-2 rounded-md text-[13px] font-semibold flex items-center gap-2 transition-colors"
+                style={{ background: 'var(--accent)', color: 'var(--accent-text-on)' }}
+                onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = 'var(--accent-hover)'}
+                onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = 'var(--accent)'}
               >
-                <Play className="w-4 h-4 fill-white" />
-                START 5-SECOND SIMULATION
+                <Play className="w-4 h-4 fill-current" />
+                Start 5-second simulation
               </button>
             ) : isRunning ? (
               <button
                 disabled
-                className="px-5 py-2.5 rounded-lg bg-[#253149] text-[#94A3B8] text-xs font-medium flex items-center gap-2 cursor-not-allowed"
+                className="px-4 py-2 rounded-md text-[12px] font-medium flex items-center gap-2 cursor-not-allowed"
+                style={{ background: 'var(--bg-elevated)', color: 'var(--text-muted)', border: '1px solid var(--border)' }}
               >
-                <Activity className="w-4 h-4 animate-spin text-[#4F7CFF]" />
-                SIMULATION IN PROGRESS...
+                <Activity className="w-4 h-4 animate-spin" style={{ color: 'var(--accent)' }} />
+                Simulation in progress…
               </button>
             ) : (
               <div className="flex items-center gap-2">
                 <button
                   onClick={startSimulation}
-                  className="px-3.5 py-2 rounded-lg bg-[#151B2E] hover:bg-[#253149] text-xs text-[#94A3B8] border border-[#253149] transition-all"
+                  className="px-3.5 py-2 rounded-md text-[12px] transition-colors"
+                  style={{ background: 'var(--bg-surface)', color: 'var(--text-secondary)', border: '1px solid var(--border)' }}
+                  onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = 'var(--bg-elevated)'}
+                  onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = 'var(--bg-surface)'}
                 >
-                  Run Again
+                  Run again
                 </button>
                 <button
                   id="btn-investigate-campaign-sim"
-                  onClick={() => {
-                    onClose();
-                    onInvestigateCampaign();
-                  }}
-                  className="px-5 py-2 rounded-lg bg-[#F87171] hover:bg-red-600 text-white text-xs font-bold flex items-center gap-2 shadow-lg shadow-red-500/20 transition-all cursor-pointer"
+                  onClick={() => { onClose(); onInvestigateCampaign(); }}
+                  className="px-4 py-2 rounded-md text-[12px] font-semibold flex items-center gap-2 transition-colors"
+                  style={{ background: 'var(--sev-critical)', color: '#fff' }}
+                  onMouseEnter={e => (e.currentTarget as HTMLElement).style.opacity = '0.9'}
+                  onMouseLeave={e => (e.currentTarget as HTMLElement).style.opacity = '1'}
                 >
-                  <span>INVESTIGATE CAMPAIGN</span>
+                  <span>Investigate campaign</span>
                   <ArrowRight className="w-4 h-4" />
                 </button>
               </div>

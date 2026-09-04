@@ -5,16 +5,7 @@ import {
   calculateTrendingHashtags,
   calculateSentiment
 } from "../utils/analytics";
-import {
-  TrendingUp,
-  Flame,
-  ArrowUpRight,
-  ArrowDownRight,
-  Minus,
-  Hash,
-  Activity,
-  Layers
-} from "lucide-react";
+import { ArrowUpRight, ArrowDownRight, Activity } from "lucide-react";
 import {
   BarChart,
   Bar,
@@ -24,7 +15,6 @@ import {
   ResponsiveContainer,
   LineChart,
   Line,
-  Cell,
   Legend
 } from "recharts";
 
@@ -33,11 +23,18 @@ interface TrendsViewProps {
   onSelectTopic?: (topic: string) => void;
 }
 
+const tooltipStyle = {
+  backgroundColor: "var(--bg-elevated)",
+  border: "1px solid var(--border)",
+  borderRadius: "6px",
+  color: "var(--text-primary)",
+  fontSize: "12px",
+};
+
 export const TrendsView: React.FC<TrendsViewProps> = ({ posts, onSelectTopic }) => {
   const topics = calculateTrendingTopics(posts);
   const hashtags = calculateTrendingHashtags(posts);
 
-  // Topic frequency over simulated timeline
   const timelineData = [
     { hour: "08:00", renewable: 4, aiTech: 3, transit: 1, hoaxScam: 0 },
     { hour: "08:45", renewable: 6, aiTech: 5, transit: 2, hoaxScam: 0 },
@@ -46,11 +43,10 @@ export const TrendsView: React.FC<TrendsViewProps> = ({ posts, onSelectTopic }) 
     { hour: "10:35", renewable: 4, aiTech: 4, transit: 2, hoaxScam: 9 },
   ];
 
-  // Emerging vs Declining
   const emergingTopics = [
-    { name: "#CleanEnergyHoax", surge: "+480%", status: "Anomalous Spike", isThreat: true },
-    { name: "Grid-Scale Storage", surge: "+85%", status: "Organic Growth", isThreat: false },
-    { name: "Reasoning Models", surge: "+62%", status: "Organic Growth", isThreat: false },
+    { name: "#CleanEnergyHoax", surge: "+480%", status: "Anomalous spike", isThreat: true },
+    { name: "Grid-Scale Storage", surge: "+85%", status: "Organic growth", isThreat: false },
+    { name: "Reasoning Models", surge: "+62%", status: "Organic growth", isThreat: false },
   ];
 
   const decliningTopics = [
@@ -59,67 +55,84 @@ export const TrendsView: React.FC<TrendsViewProps> = ({ posts, onSelectTopic }) 
   ];
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-200">
+    <div className="space-y-5 animate-in fade-in duration-200">
       {/* Header */}
-      <div className="bg-[#151B2E] border border-[#253149] p-6 rounded-2xl shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-black text-[#F8FAFC] flex items-center gap-2.5">
-            <TrendingUp className="w-7 h-7 text-[#22D3EE]" />
-            TREND INTELLIGENCE
+          <h1 className="text-xl font-semibold" style={{ color: "var(--text-primary)" }}>
+            Trend Intelligence
           </h1>
-          <p className="text-xs text-[#94A3B8] mt-1">
+          <p className="text-[13px] mt-1" style={{ color: "var(--text-secondary)" }}>
             Topic velocity tracking, hashtag acceleration, and anomalous coordinate surges.
           </p>
         </div>
-
-        <div className="flex items-center gap-3">
-          <span className="text-xs font-mono text-[#22D3EE] bg-[#1D2638] px-3 py-1.5 rounded-lg border border-[#253149]">
-            ● {topics.length} active semantic topics tracked
-          </span>
-        </div>
+        <span
+          className="text-[11px] font-mono px-2.5 py-1 rounded shrink-0"
+          style={{ background: "var(--bg-elevated)", border: "1px solid var(--border)", color: "var(--text-muted)" }}
+        >
+          {topics.length} topics tracked
+        </span>
       </div>
 
-      {/* Row 1: Emerging and Declining Topic Momentum Badges */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Emerging Topics */}
-        <div className="bg-[#1D2638] border border-[#253149] rounded-2xl p-5 shadow-lg">
-          <div className="flex items-center justify-between pb-3 border-b border-[#253149] mb-3">
-            <h3 className="text-sm font-bold text-[#F8FAFC] flex items-center gap-2">
-              <ArrowUpRight className="w-4 h-4 text-[#F87171]" />
-              EMERGING / ACCELERATING TOPICS
+      {/* Row 1: Emerging and Declining */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Emerging */}
+        <div
+          className="rounded-lg p-5"
+          style={{ background: "var(--bg-surface)", border: "1px solid var(--border)" }}
+        >
+          <div
+            className="flex items-center justify-between pb-3 mb-3"
+            style={{ borderBottom: "1px solid var(--border-muted)" }}
+          >
+            <h3
+              className="text-sm font-semibold flex items-center gap-2"
+              style={{ color: "var(--text-primary)" }}
+            >
+              <ArrowUpRight className="w-4 h-4" style={{ color: "var(--sev-critical)" }} />
+              Emerging topics
             </h3>
-            <span className="text-[11px] font-mono text-[#94A3B8]">Velocity Surge</span>
+            <span className="text-[11px] font-mono" style={{ color: "var(--text-muted)" }}>Velocity surge</span>
           </div>
-
           <div className="space-y-2.5">
             {emergingTopics.map((item, idx) => (
               <div
                 key={idx}
-                className={`p-3 rounded-xl border flex items-center justify-between ${
-                  item.isThreat
-                    ? "bg-red-500/10 border-red-500/30"
-                    : "bg-[#151B2E] border-[#253149]"
-                }`}
+                className="px-3 py-2.5 rounded-md flex items-center justify-between"
+                style={{
+                  background: "var(--bg-elevated)",
+                  border: "1px solid var(--border)",
+                  borderLeft: item.isThreat ? "2px solid var(--sev-critical)" : "1px solid var(--border)",
+                }}
               >
                 <div>
-                  <span className="text-xs font-bold text-[#F8FAFC]">
+                  <span
+                    className="text-[13px] font-medium block"
+                    style={{ color: "var(--text-primary)" }}
+                  >
                     {item.name}
                   </span>
-                  <span className="text-[10px] text-[#94A3B8] block mt-0.5 font-mono">
+                  <span className="text-[10px] font-mono" style={{ color: "var(--text-muted)" }}>
                     {item.status}
                   </span>
                 </div>
-                <div className="flex items-center gap-2 font-mono text-xs">
+                <div className="flex items-center gap-2 font-mono text-[12px]">
                   <span
-                    className={`font-bold ${
-                      item.isThreat ? "text-[#F87171]" : "text-[#34D399]"
-                    }`}
+                    className="font-semibold"
+                    style={{ color: item.isThreat ? "var(--sev-critical)" : "var(--sev-low)" }}
                   >
                     {item.surge}
                   </span>
                   {item.isThreat && (
-                    <span className="text-[9px] uppercase px-1.5 py-0.5 rounded bg-red-500/20 text-[#F87171] font-bold">
-                      ANOMALY
+                    <span
+                      className="text-[10px] px-1.5 py-0.5 rounded font-medium"
+                      style={{
+                        background: "var(--sev-critical-bg)",
+                        color: "var(--sev-critical)",
+                        border: "1px solid var(--sev-critical-bd)",
+                      }}
+                    >
+                      Anomaly
                     </span>
                   )}
                 </div>
@@ -128,31 +141,38 @@ export const TrendsView: React.FC<TrendsViewProps> = ({ posts, onSelectTopic }) 
           </div>
         </div>
 
-        {/* Declining Topics */}
-        <div className="bg-[#1D2638] border border-[#253149] rounded-2xl p-5 shadow-lg">
-          <div className="flex items-center justify-between pb-3 border-b border-[#253149] mb-3">
-            <h3 className="text-sm font-bold text-[#F8FAFC] flex items-center gap-2">
-              <ArrowDownRight className="w-4 h-4 text-[#94A3B8]" />
-              DECLINING / DECELERATING TOPICS
+        {/* Declining */}
+        <div
+          className="rounded-lg p-5"
+          style={{ background: "var(--bg-surface)", border: "1px solid var(--border)" }}
+        >
+          <div
+            className="flex items-center justify-between pb-3 mb-3"
+            style={{ borderBottom: "1px solid var(--border-muted)" }}
+          >
+            <h3
+              className="text-sm font-semibold flex items-center gap-2"
+              style={{ color: "var(--text-primary)" }}
+            >
+              <ArrowDownRight className="w-4 h-4" style={{ color: "var(--text-muted)" }} />
+              Declining topics
             </h3>
-            <span className="text-[11px] font-mono text-[#94A3B8]">Natural Decay</span>
+            <span className="text-[11px] font-mono" style={{ color: "var(--text-muted)" }}>Natural decay</span>
           </div>
-
           <div className="space-y-2.5">
             {decliningTopics.map((item, idx) => (
               <div
                 key={idx}
-                className="p-3 rounded-xl bg-[#151B2E] border border-[#253149] flex items-center justify-between"
+                className="px-3 py-2.5 rounded-md flex items-center justify-between"
+                style={{ background: "var(--bg-elevated)", border: "1px solid var(--border)" }}
               >
                 <div>
-                  <span className="text-xs font-bold text-[#F8FAFC]">
+                  <span className="text-[13px] font-medium block" style={{ color: "var(--text-primary)" }}>
                     {item.name}
                   </span>
-                  <span className="text-[10px] text-[#94A3B8] block mt-0.5 font-mono">
-                    {item.status}
-                  </span>
+                  <span className="text-[10px] font-mono" style={{ color: "var(--text-muted)" }}>{item.status}</span>
                 </div>
-                <span className="font-mono text-xs font-bold text-[#94A3B8]">
+                <span className="font-mono text-[12px] font-medium" style={{ color: "var(--text-muted)" }}>
                   {item.change}
                 </span>
               </div>
@@ -161,101 +181,114 @@ export const TrendsView: React.FC<TrendsViewProps> = ({ posts, onSelectTopic }) 
         </div>
       </div>
 
-      {/* Row 2: Topic Frequency Over Time Timeline Chart */}
-      <div className="bg-[#1D2638] border border-[#253149] rounded-2xl p-5 shadow-lg">
-        <div className="flex items-center justify-between pb-3 border-b border-[#253149] mb-4">
+      {/* Row 2: Timeline Chart */}
+      <div
+        className="rounded-lg p-5"
+        style={{ background: "var(--bg-surface)", border: "1px solid var(--border)" }}
+      >
+        <div
+          className="flex items-center justify-between pb-3 mb-4"
+          style={{ borderBottom: "1px solid var(--border-muted)" }}
+        >
           <div>
-            <h3 className="text-sm font-bold text-[#F8FAFC] flex items-center gap-2">
-              <Activity className="w-4 h-4 text-[#4F7CFF]" />
-              TOPIC FREQUENCY OVER TIME (HOURLY INGESTION)
+            <h3
+              className="text-sm font-semibold flex items-center gap-2"
+              style={{ color: "var(--text-primary)" }}
+            >
+              <Activity className="w-4 h-4" style={{ color: "var(--accent)" }} />
+              Topic frequency over time
             </h3>
-            <span className="text-[11px] text-[#94A3B8]">
-              Comparing regular conversational topics against rapid coordinated astroturf emergence
+            <span className="text-[11px]" style={{ color: "var(--text-muted)" }}>
+              Comparing organic topics vs. coordinated astroturf emergence
             </span>
           </div>
         </div>
-
-        <div className="h-64 w-full">
+        <div className="h-60 w-full">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={timelineData}>
-              <XAxis dataKey="hour" stroke="#94A3B8" fontSize={11} />
-              <YAxis stroke="#94A3B8" fontSize={11} />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: "#151B2E",
-                  borderColor: "#253149",
-                  borderRadius: "8px",
-                  color: "#F8FAFC"
-                }}
-              />
-              <Legend />
-              <Line type="monotone" dataKey="renewable" name="Renewable Energy" stroke="#34D399" strokeWidth={2} />
-              <Line type="monotone" dataKey="aiTech" name="AI & Tech" stroke="#4F7CFF" strokeWidth={2} />
-              <Line type="monotone" dataKey="transit" name="Urban Transit" stroke="#FBBF24" strokeWidth={2} />
-              <Line type="monotone" dataKey="hoaxScam" name="Hoax/Disinformation" stroke="#F87171" strokeWidth={3} strokeDasharray="3 3" />
+              <XAxis dataKey="hour" stroke="var(--text-muted)" fontSize={11} />
+              <YAxis stroke="var(--text-muted)" fontSize={11} />
+              <Tooltip contentStyle={tooltipStyle} />
+              <Legend iconType="circle" iconSize={8} />
+              <Line type="monotone" dataKey="renewable" name="Renewable Energy" stroke="var(--sev-low)" strokeWidth={2} />
+              <Line type="monotone" dataKey="aiTech" name="AI & Tech" stroke="var(--accent)" strokeWidth={2} />
+              <Line type="monotone" dataKey="transit" name="Urban Transit" stroke="var(--sev-medium)" strokeWidth={2} />
+              <Line type="monotone" dataKey="hoaxScam" name="Hoax/Disinfo" stroke="var(--sev-critical)" strokeWidth={2.5} strokeDasharray="4 3" />
             </LineChart>
           </ResponsiveContainer>
         </div>
       </div>
 
-      {/* Row 3: Sentiment & Engagement by Topic Matrix */}
-      <div className="bg-[#1D2638] border border-[#253149] rounded-2xl p-5 shadow-lg">
-        <div className="flex items-center justify-between pb-3 border-b border-[#253149] mb-4">
-          <h3 className="text-sm font-bold text-[#F8FAFC]">
-            SENTIMENT & ENGAGEMENT CORRELATION BY TOPIC
+      {/* Row 3: Sentiment Table */}
+      <div
+        className="rounded-lg p-5"
+        style={{ background: "var(--bg-surface)", border: "1px solid var(--border)" }}
+      >
+        <div
+          className="flex items-center justify-between pb-3 mb-4"
+          style={{ borderBottom: "1px solid var(--border-muted)" }}
+        >
+          <h3 className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
+            Sentiment & engagement by topic
           </h3>
-          <span className="text-xs text-[#94A3B8] font-mono">
-            {topics.length} Tracked Topics
+          <span className="text-[11px] font-mono" style={{ color: "var(--text-muted)" }}>
+            {topics.length} tracked
           </span>
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs">
+          <table className="w-full text-left text-[12px]">
             <thead>
-              <tr className="border-b border-[#253149] text-[#94A3B8] font-mono">
-                <th className="pb-3 font-semibold">TOPIC</th>
-                <th className="pb-3 font-semibold">POST COUNT</th>
-                <th className="pb-3 font-semibold">SENTIMENT</th>
-                <th className="pb-3 font-semibold">AVG SCORE</th>
-                <th className="pb-3 font-semibold">TOTAL ENGAGEMENT</th>
-                <th className="pb-3 font-semibold">MOMENTUM</th>
+              <tr style={{ borderBottom: "1px solid var(--border-muted)" }}>
+                {["Topic", "Posts", "Sentiment", "Avg score", "Engagement", "Momentum"].map(h => (
+                  <th
+                    key={h}
+                    className="pb-3 font-medium"
+                    style={{ color: "var(--text-muted)" }}
+                  >
+                    {h}
+                  </th>
+                ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#253149]/50">
+            <tbody>
               {topics.map((t, idx) => (
-                <tr key={idx} className="hover:bg-[#151B2E]/50 transition-colors">
-                  <td className="py-3 font-semibold text-[#F8FAFC]">
-                    {t.topic}
-                  </td>
-                  <td className="py-3 font-mono text-[#F8FAFC]">
-                    {t.postCount}
-                  </td>
+                <tr
+                  key={idx}
+                  className="transition-colors"
+                  style={{ borderBottom: "1px solid var(--border-muted)" }}
+                  onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = "var(--bg-elevated)"}
+                  onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = "transparent"}
+                >
+                  <td className="py-3 font-medium" style={{ color: "var(--text-primary)" }}>{t.topic}</td>
+                  <td className="py-3 font-mono" style={{ color: "var(--text-secondary)" }}>{t.postCount}</td>
                   <td className="py-3">
                     <span
-                      className={`text-[10px] px-2 py-0.5 rounded font-mono ${
-                        t.sentimentLabel === "Positive"
-                          ? "bg-emerald-500/10 text-[#34D399]"
+                      className="text-[10px] px-1.5 py-0.5 rounded font-mono"
+                      style={{
+                        background: t.sentimentLabel === "Positive"
+                          ? "var(--sev-low-bg)"
                           : t.sentimentLabel === "Negative"
-                          ? "bg-red-500/10 text-[#F87171]"
-                          : "bg-slate-700/50 text-[#94A3B8]"
-                      }`}
+                          ? "var(--sev-critical-bg)"
+                          : "var(--bg-elevated)",
+                        color: t.sentimentLabel === "Positive"
+                          ? "var(--sev-low)"
+                          : t.sentimentLabel === "Negative"
+                          ? "var(--sev-critical)"
+                          : "var(--text-muted)",
+                      }}
                     >
                       {t.sentimentLabel}
                     </span>
                   </td>
-                  <td className="py-3 font-mono text-[#94A3B8]">
-                    {t.averageSentiment}
-                  </td>
-                  <td className="py-3 font-mono text-[#22D3EE] font-bold">
-                    {t.totalEngagement}
-                  </td>
-                  <td className="py-3 font-mono text-xs">
+                  <td className="py-3 font-mono" style={{ color: "var(--text-muted)" }}>{t.averageSentiment}</td>
+                  <td className="py-3 font-mono font-semibold" style={{ color: "var(--accent)" }}>{t.totalEngagement}</td>
+                  <td className="py-3 font-mono text-[11px]">
                     <span
-                      className={`${
-                        t.momentum === "Surging"
-                          ? "text-[#F87171] font-bold"
-                          : "text-[#4F7CFF]"
-                      }`}
+                      style={{
+                        color: t.momentum === "Surging" ? "var(--sev-critical)" : "var(--text-secondary)",
+                        fontWeight: t.momentum === "Surging" ? 600 : 400,
+                      }}
                     >
                       {t.momentum}
                     </span>

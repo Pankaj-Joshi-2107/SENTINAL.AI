@@ -11,9 +11,10 @@ import {
   ShieldCheck,
   AlertOctagon,
   Settings,
+  SlidersHorizontal,
   Flame,
   Radio,
-  SlidersHorizontal
+  LogOut
 } from "lucide-react";
 
 interface SidebarProps {
@@ -24,6 +25,7 @@ interface SidebarProps {
   onOpenSimulation: () => void;
   onOpenCsvImport: () => void;
   threatCount: number;
+  onNavigateHome?: () => void;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -34,6 +36,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onOpenSimulation,
   onOpenCsvImport,
   threatCount,
+  onNavigateHome,
 }) => {
   const socialItems = [
     { id: "overview", label: "Overview", icon: LayoutDashboard },
@@ -44,49 +47,66 @@ export const Sidebar: React.FC<SidebarProps> = ({
   ];
 
   const threatItems = [
-    { id: "campaigns", label: "Campaigns", icon: ShieldAlert, badge: "Detected" },
+    { id: "campaigns", label: "Campaigns", icon: ShieldAlert },
     { id: "network", label: "Network", icon: Network },
     { id: "cyber-safety", label: "Cyber Safety", icon: ShieldCheck },
     { id: "threat-center", label: "Threat Center", icon: AlertOctagon, count: threatCount },
   ];
 
   return (
-    <aside className="w-64 bg-[#151B2E] border-r border-[#253149] flex flex-col shrink-0 select-none h-screen sticky top-0">
+    <aside
+      className="w-64 flex flex-col shrink-0 select-none h-screen sticky top-0 z-20"
+      style={{
+        background: "var(--bg-surface)",
+        borderRight: "1px solid var(--border)",
+      }}
+    >
       {/* Brand Header */}
-      <div className="p-5 border-b border-[#253149] flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#4F7CFF] to-[#8B5CF6] flex items-center justify-center shadow-lg shadow-blue-500/25">
-            <Radio className="w-5 h-5 text-white animate-pulse" />
+      <div
+        className="px-5 py-4 flex items-center gap-3"
+        style={{ borderBottom: "1px solid var(--border)" }}
+      >
+        <div
+          className="w-9 h-9 rounded-lg overflow-hidden shrink-0 shadow-sm border border-[var(--border)] flex items-center justify-center"
+          style={{ background: "#111215" }}
+        >
+          <img
+            src="/sentinel-shield.png"
+            alt="Sentinel AI Logo"
+            className="w-full h-full object-cover"
+          />
+        </div>
+        <div className="min-w-0">
+          <div className="flex items-center gap-1.5 leading-none">
+            <span className="text-sm font-bold tracking-tight" style={{ color: "var(--text-primary)" }}>
+              SENTINEL
+            </span>
+            <span
+              className="text-[10px] font-mono px-1.5 py-0.5 rounded font-semibold"
+              style={{
+                background: "var(--accent-subtle)",
+                color: "var(--accent)",
+                border: "1px solid var(--accent-border)",
+              }}
+            >
+              AI
+            </span>
           </div>
-          <div>
-            <span className="text-base font-extrabold tracking-wider font-mono text-[#F8FAFC]">
-              SENTINEL<span className="text-[#4F7CFF]">-AI</span>
-            </span>
-            <span className="block text-[10px] font-mono text-[#94A3B8] tracking-widest uppercase">
-              Team Syntrix • SIH
-            </span>
+          <div className="text-[11px] mt-1" style={{ color: "var(--text-muted)" }}>
+            Threat Intelligence
           </div>
         </div>
       </div>
 
       {/* Navigation Groups */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-6">
-        {/* Quick Simulation Trigger in Sidebar */}
+      <div className="flex-1 overflow-y-auto px-3 py-4 space-y-6">
+        {/* Social Intelligence */}
         <div>
-          <button
-            id="sidebar-run-simulation"
-            onClick={onOpenSimulation}
-            className="w-full py-2.5 px-3 rounded-xl bg-gradient-to-r from-red-500/20 via-[#8B5CF6]/20 to-[#4F7CFF]/20 hover:from-red-500/30 hover:to-[#4F7CFF]/30 border border-red-500/40 text-xs font-bold text-[#F8FAFC] flex items-center justify-center gap-2 transition-all shadow-md cursor-pointer group"
+          <div
+            className="text-[10px] font-semibold uppercase tracking-wider px-2 mb-2"
+            style={{ color: "var(--text-muted)" }}
           >
-            <Flame className="w-4 h-4 text-[#F87171] group-hover:scale-110 transition-transform" />
-            <span>RUN THREAT SIMULATION</span>
-          </button>
-        </div>
-
-        {/* SOCIAL INTELLIGENCE SECTION */}
-        <div>
-          <div className="text-[11px] font-bold uppercase tracking-wider text-[#94A3B8] px-3 mb-2">
-            SOCIAL INTELLIGENCE
+            Social Intelligence
           </div>
           <nav className="space-y-1">
             {socialItems.map((item) => {
@@ -97,29 +117,40 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   key={item.id}
                   id={`nav-item-${item.id}`}
                   onClick={() => setActiveTab(item.id as ActiveTab)}
-                  className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold transition-all ${
-                    isActive
-                      ? "bg-[#4F7CFF] text-white shadow-md shadow-blue-600/30"
-                      : "text-[#94A3B8] hover:text-[#F8FAFC] hover:bg-[#1D2638]"
-                  }`}
+                  className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-medium transition-all text-left group"
+                  style={{
+                    background: isActive ? "var(--accent-subtle)" : "transparent",
+                    color: isActive ? "var(--accent)" : "var(--text-secondary)",
+                    border: `1px solid ${isActive ? "var(--accent-border)" : "transparent"}`,
+                  }}
+                  onMouseEnter={e => {
+                    if (!isActive) {
+                      (e.currentTarget as HTMLElement).style.color = "var(--text-primary)";
+                      (e.currentTarget as HTMLElement).style.background = "var(--bg-hover)";
+                    }
+                  }}
+                  onMouseLeave={e => {
+                    if (!isActive) {
+                      (e.currentTarget as HTMLElement).style.color = "var(--text-secondary)";
+                      (e.currentTarget as HTMLElement).style.background = "transparent";
+                    }
+                  }}
                 >
-                  <div className="flex items-center gap-2.5">
-                    <Icon className="w-4 h-4 shrink-0" />
-                    <span>{item.label}</span>
-                  </div>
+                  <Icon className="w-4 h-4 shrink-0 transition-transform group-hover:scale-105" />
+                  <span>{item.label}</span>
                 </button>
               );
             })}
           </nav>
         </div>
 
-        {/* THREAT INTELLIGENCE SECTION */}
+        {/* Threat Intelligence */}
         <div>
-          <div className="text-[11px] font-bold uppercase tracking-wider text-[#94A3B8] px-3 mb-2 flex items-center justify-between">
-            <span>THREAT INTELLIGENCE</span>
-            <span className="text-[9px] font-mono bg-red-500/20 text-[#F87171] px-1.5 py-0.2 rounded">
-              DEFENSIVE
-            </span>
+          <div
+            className="text-[10px] font-semibold uppercase tracking-wider px-2 mb-2"
+            style={{ color: "var(--text-muted)" }}
+          >
+            Threat Intelligence
           </div>
           <nav className="space-y-1">
             {threatItems.map((item) => {
@@ -130,23 +161,38 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   key={item.id}
                   id={`nav-item-${item.id}`}
                   onClick={() => setActiveTab(item.id as ActiveTab)}
-                  className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold transition-all ${
-                    isActive
-                      ? "bg-[#8B5CF6] text-white shadow-md shadow-purple-600/30"
-                      : "text-[#94A3B8] hover:text-[#F8FAFC] hover:bg-[#1D2638]"
-                  }`}
+                  className="w-full flex items-center justify-between px-3 py-2 rounded-lg text-[13px] font-medium transition-all text-left group"
+                  style={{
+                    background: isActive ? "var(--accent-subtle)" : "transparent",
+                    color: isActive ? "var(--accent)" : "var(--text-secondary)",
+                    border: `1px solid ${isActive ? "var(--accent-border)" : "transparent"}`,
+                  }}
+                  onMouseEnter={e => {
+                    if (!isActive) {
+                      (e.currentTarget as HTMLElement).style.color = "var(--text-primary)";
+                      (e.currentTarget as HTMLElement).style.background = "var(--bg-hover)";
+                    }
+                  }}
+                  onMouseLeave={e => {
+                    if (!isActive) {
+                      (e.currentTarget as HTMLElement).style.color = "var(--text-secondary)";
+                      (e.currentTarget as HTMLElement).style.background = "transparent";
+                    }
+                  }}
                 >
-                  <div className="flex items-center gap-2.5">
-                    <Icon className="w-4 h-4 shrink-0" />
+                  <div className="flex items-center gap-3">
+                    <Icon className="w-4 h-4 shrink-0 transition-transform group-hover:scale-105" />
                     <span>{item.label}</span>
                   </div>
-                  {item.badge && (
-                    <span className="text-[10px] font-mono uppercase bg-red-500/20 text-[#F87171] px-1.5 py-0.5 rounded">
-                      {item.badge}
-                    </span>
-                  )}
-                  {typeof item.count === "number" && (
-                    <span className="text-[10px] font-mono bg-[#1D2638] text-[#22D3EE] px-1.5 py-0.5 rounded border border-[#253149]">
+                  {typeof item.count === "number" && item.count > 0 && (
+                    <span
+                      className="text-[10px] font-mono px-2 py-0.5 rounded-full font-bold"
+                      style={{
+                        background: "var(--sev-critical-bg)",
+                        color: "var(--sev-critical)",
+                        border: "1px solid var(--sev-critical-bd)"
+                      }}
+                    >
                       {item.count}
                     </span>
                   )}
@@ -156,69 +202,140 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </nav>
         </div>
 
-        {/* DATASET SCENARIO SELECTOR */}
-        <div className="pt-2 border-t border-[#253149]">
-          <div className="text-[10px] font-bold uppercase tracking-wider text-[#94A3B8] px-3 mb-2 flex items-center justify-between">
-            <span>DATA SCENARIO</span>
-            <span className="font-mono text-[#22D3EE]">DEMO</span>
+        {/* Data Scenario Selector */}
+        <div style={{ borderTop: "1px solid var(--border-muted)", paddingTop: "14px" }}>
+          <div
+            className="text-[10px] font-semibold uppercase tracking-wider px-2 mb-2 flex items-center justify-between"
+            style={{ color: "var(--text-muted)" }}
+          >
+            <span>Data Scenario</span>
+            <Radio className="w-3 h-3" style={{ color: "var(--accent)" }} />
           </div>
-          <div className="grid grid-cols-2 gap-1.5 px-1">
+          <div className="grid grid-cols-2 gap-1.5">
             {[
               { id: "all", label: "All Data" },
-              { id: "normal", label: "Scenario A" },
-              { id: "cyberbullying", label: "Scenario B" },
-              { id: "coordinated", label: "Scenario C" }
-            ].map((sc) => (
-              <button
-                key={sc.id}
-                onClick={() => setActiveScenario(sc.id as any)}
-                className={`text-[11px] py-1.5 px-2 rounded-md font-mono transition-all text-center ${
-                  activeScenario === sc.id
-                    ? "bg-[#253149] text-[#22D3EE] font-bold border border-[#4F7CFF]/50"
-                    : "bg-[#111827] text-[#94A3B8] hover:text-[#F8FAFC] border border-[#253149]"
-                }`}
-              >
-                {sc.label}
-              </button>
-            ))}
+              { id: "normal", label: "Normal" },
+              { id: "cyberbullying", label: "Bullying" },
+              { id: "coordinated", label: "Swarm" }
+            ].map((sc) => {
+              const isActive = activeScenario === sc.id;
+              return (
+                <button
+                  key={sc.id}
+                  onClick={() => setActiveScenario(sc.id as any)}
+                  className="text-[11px] py-1.5 px-2 rounded-md text-center font-medium transition-all"
+                  style={{
+                    background: isActive ? "var(--accent-subtle)" : "var(--bg-elevated)",
+                    color: isActive ? "var(--accent)" : "var(--text-secondary)",
+                    border: `1px solid ${isActive ? "var(--accent-border)" : "var(--border)"}`,
+                  }}
+                >
+                  {sc.label}
+                </button>
+              );
+            })}
           </div>
         </div>
       </div>
 
-      {/* Footer Bottom */}
-      <div className="p-4 border-t border-[#253149] bg-[#111827] space-y-2">
+      {/* Footer Controls */}
+      <div
+        className="p-3 space-y-1.5"
+        style={{ borderTop: "1px solid var(--border)" }}
+      >
+        {/* Run Threat Simulation — Signature Amber CTA */}
+        <button
+          id="sidebar-run-threat-simulation"
+          onClick={onOpenSimulation}
+          className="w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-[13px] font-semibold transition-all shadow-sm active:scale-[0.98]"
+          style={{
+            background: "linear-gradient(135deg, #e5a93c 0%, #d49b2e 100%)",
+            color: "var(--accent-text-on)",
+          }}
+          onMouseEnter={e => {
+            (e.currentTarget as HTMLElement).style.filter = "brightness(1.08)";
+          }}
+          onMouseLeave={e => {
+            (e.currentTarget as HTMLElement).style.filter = "brightness(1.0)";
+          }}
+        >
+          <Flame className="w-4 h-4" />
+          <span>Run Threat Simulation</span>
+        </button>
+
         <button
           onClick={onOpenCsvImport}
-          className="w-full flex items-center justify-between px-3 py-1.5 rounded-lg text-xs text-[#94A3B8] hover:text-[#F8FAFC] hover:bg-[#1D2638] transition-colors"
+          className="w-full flex items-center gap-2.5 px-3 py-2 rounded-md text-[12px] font-medium transition-colors"
+          style={{ color: "var(--text-secondary)" }}
+          onMouseEnter={e => {
+            (e.currentTarget as HTMLElement).style.color = "var(--text-primary)";
+            (e.currentTarget as HTMLElement).style.background = "var(--bg-hover)";
+          }}
+          onMouseLeave={e => {
+            (e.currentTarget as HTMLElement).style.color = "var(--text-secondary)";
+            (e.currentTarget as HTMLElement).style.background = "transparent";
+          }}
         >
-          <div className="flex items-center gap-2">
-            <SlidersHorizontal className="w-3.5 h-3.5 text-[#22D3EE]" />
-            <span>Import CSV Dataset</span>
-          </div>
+          <SlidersHorizontal className="w-3.5 h-3.5" style={{ color: "var(--text-muted)" }} />
+          <span>Import CSV Dataset</span>
         </button>
 
         <button
           id="nav-item-settings"
           onClick={() => setActiveTab("settings")}
-          className={`w-full flex items-center justify-between px-3 py-1.5 rounded-lg text-xs transition-colors ${
-            activeTab === "settings"
-              ? "bg-[#1D2638] text-[#F8FAFC] font-bold"
-              : "text-[#94A3B8] hover:text-[#F8FAFC] hover:bg-[#1D2638]"
-          }`}
+          className="w-full flex items-center gap-2.5 px-3 py-2 rounded-md text-[12px] font-medium transition-colors"
+          style={{
+            background: activeTab === "settings" ? "var(--bg-elevated)" : "transparent",
+            color: activeTab === "settings" ? "var(--text-primary)" : "var(--text-secondary)",
+          }}
+          onMouseEnter={e => {
+            if (activeTab !== "settings") {
+              (e.currentTarget as HTMLElement).style.color = "var(--text-primary)";
+              (e.currentTarget as HTMLElement).style.background = "var(--bg-hover)";
+            }
+          }}
+          onMouseLeave={e => {
+            if (activeTab !== "settings") {
+              (e.currentTarget as HTMLElement).style.color = "var(--text-secondary)";
+              (e.currentTarget as HTMLElement).style.background = "transparent";
+            }
+          }}
         >
-          <div className="flex items-center gap-2">
-            <Settings className="w-3.5 h-3.5 text-[#8B5CF6]" />
-            <span>Settings & Ethics</span>
-          </div>
-          <span className="text-[10px] text-[#34D399] font-mono">v1.0</span>
+          <Settings className="w-3.5 h-3.5" style={{ color: "var(--text-muted)" }} />
+          <span>Settings & Ethics</span>
         </button>
 
-        <div className="pt-2 border-t border-[#253149] flex items-center justify-between text-[10px] text-[#94A3B8] font-mono">
-          <span className="flex items-center gap-1">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#34D399] animate-ping" />
-            DEMO STREAM ACTIVE
-          </span>
-          <span className="text-slate-500">SIH 2026</span>
+        {onNavigateHome && (
+          <button
+            id="nav-item-exit-landing"
+            onClick={onNavigateHome}
+            className="w-full flex items-center gap-2.5 px-3 py-1.5 rounded-md text-[11px] font-medium transition-colors"
+            style={{ color: "var(--text-muted)" }}
+            onMouseEnter={e => {
+              (e.currentTarget as HTMLElement).style.color = "var(--accent)";
+              (e.currentTarget as HTMLElement).style.background = "var(--bg-hover)";
+            }}
+            onMouseLeave={e => {
+              (e.currentTarget as HTMLElement).style.color = "var(--text-muted)";
+              (e.currentTarget as HTMLElement).style.background = "transparent";
+            }}
+          >
+            <LogOut className="w-3.5 h-3.5" />
+            <span>Public Portal</span>
+          </button>
+        )}
+
+        {/* Live Status Bar */}
+        <div
+          className="px-2 pt-2 flex items-center gap-2 text-[11px] font-mono"
+          style={{ color: "var(--text-muted)", borderTop: "1px solid var(--border-muted)" }}
+        >
+          <span
+            className="w-2 h-2 rounded-full shrink-0"
+            style={{ background: "var(--sev-low)" }}
+          />
+          <span className="truncate">Stream Active</span>
+          <span className="ml-auto font-semibold text-[10px]" style={{ color: "var(--text-muted)" }}>v2.4.0</span>
         </div>
       </div>
     </aside>

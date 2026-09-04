@@ -10,36 +10,44 @@ interface ThreatBadgeProps {
 export const ThreatBadge: React.FC<ThreatBadgeProps> = ({ level, size = "md", showScore }) => {
   const normLevel = (level || "LOW").toUpperCase();
 
-  let bg = "bg-emerald-500/15 text-[#34D399] border-emerald-500/30";
-  let dotColor = "bg-[#34D399]";
+  let color = "var(--sev-low)";
+  let bg = "var(--sev-low-bg)";
+  let border = "var(--sev-low-bd)";
 
   if (normLevel === "CRITICAL") {
-    bg = "bg-red-500/20 text-[#F87171] border-red-500/40 animate-pulse";
-    dotColor = "bg-[#F87171]";
+    color = "var(--sev-critical)";
+    bg = "var(--sev-critical-bg)";
+    border = "var(--sev-critical-bd)";
   } else if (normLevel === "HIGH") {
-    bg = "bg-rose-500/15 text-[#F87171] border-rose-500/30";
-    dotColor = "bg-[#F87171]";
+    color = "var(--sev-high)";
+    bg = "var(--sev-high-bg)";
+    border = "var(--sev-high-bd)";
   } else if (normLevel === "MEDIUM") {
-    bg = "bg-amber-500/15 text-[#FBBF24] border-amber-500/30";
-    dotColor = "bg-[#FBBF24]";
+    color = "var(--sev-medium)";
+    bg = "var(--sev-medium-bg)";
+    border = "var(--sev-medium-bd)";
   }
 
-  const sizeClasses =
+  const sizeClass =
     size === "sm"
-      ? "text-xs px-2 py-0.5"
+      ? "text-[10px] px-1.5 py-0.5"
       : size === "lg"
-      ? "text-sm px-3.5 py-1.5 font-semibold"
-      : "text-xs px-2.5 py-1 font-medium";
+      ? "text-xs px-3 py-1"
+      : "text-[11px] px-2 py-0.5";
 
   return (
     <span
       id={`threat-badge-${normLevel.toLowerCase()}`}
-      className={`inline-flex items-center gap-1.5 rounded-full border ${bg} ${sizeClasses} whitespace-nowrap tracking-wide`}
+      className={`inline-flex items-center gap-1 rounded whitespace-nowrap font-mono font-medium ${sizeClass}`}
+      style={{ color, background: bg, border: `1px solid ${border}` }}
     >
-      <span className={`h-1.5 w-1.5 rounded-full ${dotColor}`} />
+      <span
+        className="w-1.5 h-1.5 rounded-full shrink-0"
+        style={{ background: color }}
+      />
       <span>{normLevel}</span>
       {typeof showScore === "number" && (
-        <span className="font-mono text-[11px] opacity-90">({showScore})</span>
+        <span className="opacity-75">({showScore})</span>
       )}
     </span>
   );

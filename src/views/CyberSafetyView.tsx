@@ -4,11 +4,7 @@ import { analyzePostFallback } from "../utils/fallbackNLP";
 import { ThreatBadge } from "../components/ThreatBadge";
 import {
   ShieldCheck,
-  AlertTriangle,
-  ShieldAlert,
   Info,
-  CheckCircle2,
-  AlertOctagon,
   CornerDownRight
 } from "lucide-react";
 
@@ -21,133 +17,176 @@ export const CyberSafetyView: React.FC<CyberSafetyViewProps> = ({
   posts,
   onAnalyzePost
 }) => {
-  // Grab high toxicity or cyberbullying posts from dataset
   const harassmentPosts = posts.filter(
     (p) => (p.cyberbullyingRisk || 0) > 40 || (p.toxicityScore || 0) > 40 || p.scenario === "cyberbullying"
   );
 
-  const [selectedPost, setSelectedPost] = useState<Post>(
-    harassmentPosts[0] || posts[0]
-  );
+  const [selectedPost, setSelectedPost] = useState<Post>(harassmentPosts[0] || posts[0]);
   const [customText, setCustomText] = useState<string>("");
   const [useCustom, setUseCustom] = useState<boolean>(false);
 
   const textToAnalyze = useCustom ? customText : selectedPost?.text || "";
   const analysis = analyzePostFallback(textToAnalyze);
 
+  const getRiskColor = () => {
+    if (analysis.cyberbullyingRisk > 70) return "var(--sev-critical)";
+    if (analysis.cyberbullyingRisk > 45) return "var(--sev-high)";
+    if (analysis.cyberbullyingRisk > 25) return "var(--sev-medium)";
+    return "var(--sev-low)";
+  };
+
   return (
-    <div className="space-y-6 animate-in fade-in duration-200">
+    <div className="space-y-5 animate-in fade-in duration-200">
       {/* Header */}
-      <div className="bg-[#151B2E] border border-[#253149] p-6 rounded-2xl shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-black text-[#F8FAFC] flex items-center gap-2.5">
-            <ShieldCheck className="w-7 h-7 text-[#34D399]" />
-            CYBER SAFETY & HARASSMENT DETECTION
+          <h1 className="text-xl font-semibold" style={{ color: "var(--text-primary)" }}>
+            Cyber Safety & Harassment Detection
           </h1>
-          <p className="text-xs text-[#94A3B8] mt-1">
+          <p className="text-[13px] mt-1" style={{ color: "var(--text-secondary)" }}>
             Proactive identification of targeted harassment, hate speech, dogpiling, and digital bullying vectors.
           </p>
         </div>
-
-        <div className="flex items-center gap-2">
-          <span className="text-xs font-mono text-[#FBBF24] bg-amber-500/10 px-3 py-1.5 rounded-lg border border-amber-500/30">
-            {harassmentPosts.length} Incidents Flagged in Stream
-          </span>
-        </div>
+        <span
+          className="text-[11px] font-mono px-2.5 py-1 rounded shrink-0"
+          style={{
+            background: "var(--sev-medium-bg)",
+            color: "var(--sev-medium)",
+            border: "1px solid var(--sev-medium-bd)"
+          }}
+        >
+          {harassmentPosts.length} incidents flagged
+        </span>
       </div>
 
-      {/* Main Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Left: Harassment Incidents in Dataset / Custom Input (5 cols) */}
-        <div className="lg:col-span-5 space-y-4">
-          <div className="bg-[#1D2638] border border-[#253149] rounded-2xl p-5 shadow-lg space-y-4">
+      {/* Main grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
+        {/* Left: incident selector (5 cols) */}
+        <div className="lg:col-span-5 space-y-3">
+          <div
+            className="rounded-lg p-5 space-y-4"
+            style={{ background: "var(--bg-surface)", border: "1px solid var(--border)" }}
+          >
             <div className="flex items-center justify-between">
-              <h3 className="text-sm font-bold text-[#F8FAFC]">
-                Select Incident or Input Text
+              <h3 className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
+                Select incident or input text
               </h3>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => setUseCustom(false)}
-                  className={`text-[11px] px-2 py-0.5 rounded font-mono ${
-                    !useCustom ? "bg-[#4F7CFF] text-white font-bold" : "text-[#94A3B8] hover:text-white"
-                  }`}
-                >
-                  Stream Incidents
-                </button>
-                <button
-                  onClick={() => {
-                    setUseCustom(true);
-                    if (!customText) {
-                      setCustomText("You are an absolute fraud. Nobody likes your work and you should delete your account right now.");
-                    }
-                  }}
-                  className={`text-[11px] px-2 py-0.5 rounded font-mono ${
-                    useCustom ? "bg-[#4F7CFF] text-white font-bold" : "text-[#94A3B8] hover:text-white"
-                  }`}
-                >
-                  Custom
-                </button>
+              <div className="flex items-center gap-1.5">
+                {[
+                  { id: false, label: "Incidents" },
+                  { id: true, label: "Custom" },
+                ].map((mode) => (
+                  <button
+                    key={String(mode.id)}
+                    onClick={() => {
+                      setUseCustom(mode.id);
+                      if (mode.id && !customText) {
+                        setCustomText(
+                          "You are an absolute fraud. Nobody likes your work and you should delete your account right now."
+                        );
+                      }
+                    }}
+                    className="text-[11px] px-2.5 py-1 rounded transition-colors font-mono"
+                    style={{
+                      background: useCustom === mode.id ? "var(--accent-subtle)" : "var(--bg-elevated)",
+                      border: `1px solid ${useCustom === mode.id ? "var(--accent-border)" : "var(--border)"}`,
+                      color: useCustom === mode.id ? "var(--accent)" : "var(--text-secondary)",
+                    }}
+                  >
+                    {mode.label}
+                  </button>
+                ))}
               </div>
             </div>
 
             {!useCustom ? (
-              <div className="space-y-2.5 max-h-[380px] overflow-y-auto">
+              <div className="space-y-2 max-h-[380px] overflow-y-auto">
                 {harassmentPosts.map((post) => {
                   const isSelected = selectedPost?.id === post.id;
                   return (
                     <div
                       key={post.id}
                       onClick={() => setSelectedPost(post)}
-                      className={`p-3 rounded-xl border transition-all cursor-pointer ${
-                        isSelected
-                          ? "bg-[#151B2E] border-[#F87171] shadow-md shadow-red-500/10"
-                          : "bg-[#111827] border-[#253149] hover:border-slate-600"
-                      }`}
+                      className="p-3 rounded-md transition-colors cursor-pointer"
+                      style={{
+                        background: isSelected ? "var(--bg-elevated)" : "var(--bg-base)",
+                        border: `1px solid ${isSelected ? "var(--accent-border)" : "var(--border)"}`,
+                        borderLeft: isSelected ? "2px solid var(--accent)" : "1px solid var(--border)",
+                      }}
                     >
-                      <div className="flex items-center justify-between text-xs mb-1">
-                        <span className="font-semibold text-[#F8FAFC]">@{post.username}</span>
+                      <div className="flex items-center justify-between text-[12px] mb-1">
+                        <span className="font-semibold" style={{ color: "var(--text-primary)" }}>
+                          @{post.username}
+                        </span>
                         <ThreatBadge level="HIGH" size="sm" showScore={post.cyberbullyingRisk || 78} />
                       </div>
-                      <p className="text-xs text-[#94A3B8] line-clamp-2">{post.text}</p>
+                      <p className="text-[11px] leading-relaxed line-clamp-2" style={{ color: "var(--text-secondary)" }}>
+                        {post.text}
+                      </p>
                     </div>
                   );
                 })}
               </div>
             ) : (
-              <div className="space-y-3">
+              <div>
+                <label
+                  className="text-[10px] font-mono block mb-1.5"
+                  style={{ color: "var(--text-muted)" }}
+                >
+                  Text to analyze
+                </label>
                 <textarea
-                  rows={6}
+                  rows={7}
                   value={customText}
                   onChange={(e) => setCustomText(e.target.value)}
-                  placeholder="Enter text to analyze for cyberbullying / safety risks..."
-                  className="w-full bg-[#151B2E] border border-[#253149] rounded-xl p-3 text-xs text-[#F8FAFC] focus:border-[#4F7CFF] focus:outline-none"
+                  placeholder="Enter text to analyze for cyberbullying / safety risks…"
+                  className="w-full rounded-md p-3 text-[12px] leading-relaxed resize-none"
+                  style={{
+                    background: "var(--bg-elevated)",
+                    border: "1px solid var(--border)",
+                    color: "var(--text-primary)",
+                    outline: "none",
+                  }}
+                  onFocus={e => (e.currentTarget as HTMLElement).style.borderColor = "var(--accent)"}
+                  onBlur={e => (e.currentTarget as HTMLElement).style.borderColor = "var(--border)"}
                 />
               </div>
             )}
           </div>
 
-          {/* Ethics & Moderation Disclaimer */}
-          <div className="bg-[#151B2E] border border-[#253149] rounded-xl p-4 text-xs text-[#94A3B8] space-y-2">
-            <div className="flex items-center gap-2 text-[#FBBF24] font-semibold">
-              <Info className="w-4 h-4 shrink-0" />
-              <span>Moderation & Safety Policy Notice</span>
+          {/* Policy disclaimer */}
+          <div
+            className="rounded-lg p-4 flex items-start gap-2.5"
+            style={{ background: "var(--bg-elevated)", border: "1px solid var(--border)" }}
+          >
+            <Info className="w-4 h-4 shrink-0 mt-0.5" style={{ color: "var(--accent)" }} />
+            <div>
+              <p className="text-[11px] font-medium mb-0.5" style={{ color: "var(--text-primary)" }}>
+                Moderation & Safety Policy Notice
+              </p>
+              <p className="text-[11px] leading-relaxed" style={{ color: "var(--text-muted)" }}>
+                SENTINEL-AI operates as an advisory system. All flags support human trust and safety teams — no autonomous content removal.
+              </p>
             </div>
-            <p className="text-[11px] leading-relaxed">
-              SENTINEL-AI operates as an advisory assistive intelligence system. All flags and recommendations ("ESCALATE", "FLAG FOR REVIEW") are calibrated to support human trust and safety teams, preventing autonomous censorship and upholding ethical moderation standards.
-            </p>
           </div>
         </div>
 
-        {/* Right: Detailed Risk Scoring & Evidence Breakdown (7 cols) */}
-        <div className="lg:col-span-7 space-y-6">
-          <div className="bg-[#1D2638] border border-[#253149] rounded-2xl p-6 shadow-xl space-y-6">
-            {/* Header with Risk Level */}
-            <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-[#253149]">
+        {/* Right: analysis results (7 cols) */}
+        <div className="lg:col-span-7">
+          <div
+            className="rounded-lg p-5 space-y-5"
+            style={{ background: "var(--bg-surface)", border: "1px solid var(--border)" }}
+          >
+            {/* Status row */}
+            <div
+              className="flex flex-wrap items-center justify-between gap-3 pb-4"
+              style={{ borderBottom: "1px solid var(--border-muted)" }}
+            >
               <div>
-                <span className="text-[11px] font-mono text-[#94A3B8] uppercase block">
-                  EVALUATED SAFETY STATUS
+                <span className="text-[10px] font-mono block mb-1.5" style={{ color: "var(--text-muted)" }}>
+                  Safety status
                 </span>
-                <div className="mt-1 flex items-center gap-2">
+                <div className="flex items-center gap-2">
                   <ThreatBadge
                     level={
                       analysis.cyberbullyingRisk > 70
@@ -161,92 +200,138 @@ export const CyberSafetyView: React.FC<CyberSafetyViewProps> = ({
                     size="lg"
                     showScore={analysis.cyberbullyingRisk}
                   />
-                  <span className="text-xs font-mono text-[#94A3B8]">
-                    Toxicity: {analysis.toxicityScore} / 100
+                  <span className="text-[11px] font-mono" style={{ color: "var(--text-muted)" }}>
+                    Toxicity: {analysis.toxicityScore}/100
                   </span>
                 </div>
               </div>
-
               <div className="text-right">
-                <span className="text-[11px] font-mono text-[#94A3B8] block">
-                  RECOMMENDED ACTION
+                <span className="text-[10px] font-mono block mb-1.5" style={{ color: "var(--text-muted)" }}>
+                  Recommended action
                 </span>
                 <span
-                  className={`inline-block px-3 py-1 rounded-full text-xs font-mono font-bold uppercase mt-1 ${
-                    analysis.recommendedAction === "ESCALATE"
-                      ? "bg-red-500/20 text-[#F87171] border border-red-500/40"
-                      : analysis.recommendedAction === "FLAG FOR REVIEW"
-                      ? "bg-amber-500/20 text-[#FBBF24] border border-amber-500/30"
-                      : "bg-emerald-500/20 text-[#34D399] border border-emerald-500/30"
-                  }`}
+                  className="inline-flex items-center px-3 py-1 rounded text-[11px] font-mono font-semibold uppercase"
+                  style={{
+                    background:
+                      analysis.recommendedAction === "ESCALATE"
+                        ? "var(--sev-critical-bg)"
+                        : analysis.recommendedAction === "FLAG FOR REVIEW"
+                        ? "var(--sev-medium-bg)"
+                        : "var(--sev-low-bg)",
+                    color:
+                      analysis.recommendedAction === "ESCALATE"
+                        ? "var(--sev-critical)"
+                        : analysis.recommendedAction === "FLAG FOR REVIEW"
+                        ? "var(--sev-medium)"
+                        : "var(--sev-low)",
+                    border: `1px solid ${
+                      analysis.recommendedAction === "ESCALATE"
+                        ? "var(--sev-critical-bd)"
+                        : analysis.recommendedAction === "FLAG FOR REVIEW"
+                        ? "var(--sev-medium-bd)"
+                        : "var(--sev-low-bd)"
+                    }`,
+                  }}
                 >
                   {analysis.recommendedAction}
                 </span>
               </div>
             </div>
 
-            {/* Target Post Quote */}
+            {/* Inspected text */}
             <div>
-              <span className="text-xs font-mono text-[#94A3B8] uppercase block mb-1.5">
-                INSPECTED TEXT:
+              <span className="text-[10px] font-mono block mb-1.5" style={{ color: "var(--text-muted)" }}>
+                Analyzed text
               </span>
-              <div className="p-3.5 rounded-xl bg-[#151B2E] border border-[#253149] text-xs text-[#F8FAFC] leading-relaxed italic">
+              <div
+                className="p-3 rounded-md text-[12px] leading-relaxed italic"
+                style={{
+                  background: "var(--bg-elevated)",
+                  border: "1px solid var(--border)",
+                  color: "var(--text-secondary)",
+                }}
+              >
                 "{textToAnalyze}"
               </div>
             </div>
 
-            {/* Cyberbullying Risk Gauge / Visual Bar */}
-            <div className="bg-[#151B2E] border border-[#253149] p-4 rounded-xl space-y-2">
-              <div className="flex justify-between items-center text-xs">
-                <span className="font-semibold text-[#F8FAFC]">
-                  Cyberbullying & Harassment Probability Gauge
+            {/* Risk gauge */}
+            <div
+              className="rounded-md p-4 space-y-2"
+              style={{ background: "var(--bg-elevated)", border: "1px solid var(--border)" }}
+            >
+              <div className="flex justify-between items-center">
+                <span className="text-[12px] font-medium" style={{ color: "var(--text-primary)" }}>
+                  Harassment probability
                 </span>
-                <span className="font-mono font-bold text-base text-[#F87171]">
-                  {analysis.cyberbullyingRisk} <span className="text-xs text-[#94A3B8]">/ 100</span>
+                <span className="font-mono font-bold text-base" style={{ color: getRiskColor() }}>
+                  {analysis.cyberbullyingRisk} <span className="text-[11px]" style={{ color: "var(--text-muted)" }}>/ 100</span>
                 </span>
               </div>
-              <div className="w-full h-3 bg-[#111827] rounded-full overflow-hidden border border-[#253149]">
+              <div
+                className="w-full h-2 rounded-full overflow-hidden"
+                style={{ background: "var(--bg-base)" }}
+              >
                 <div
-                  className="h-full bg-gradient-to-r from-emerald-500 via-amber-500 to-rose-500 rounded-full transition-all duration-500"
-                  style={{ width: `${analysis.cyberbullyingRisk}%` }}
+                  className="h-full rounded-full transition-all duration-500"
+                  style={{
+                    width: `${analysis.cyberbullyingRisk}%`,
+                    background: `linear-gradient(90deg, var(--sev-low) 0%, var(--sev-medium) 50%, var(--sev-critical) 100%)`,
+                  }}
                 />
               </div>
-              <div className="flex justify-between text-[10px] text-[#94A3B8] font-mono">
-                <span>0 LOW</span>
-                <span>30 MEDIUM</span>
-                <span>60 HIGH</span>
-                <span>100 CRITICAL</span>
+              <div className="flex justify-between text-[9px] font-mono" style={{ color: "var(--text-muted)" }}>
+                <span>0 Low</span>
+                <span>30 Medium</span>
+                <span>60 High</span>
+                <span>100 Critical</span>
               </div>
             </div>
 
-            {/* Detected Evidence Breakdown */}
-            <div>
-              <h4 className="text-xs font-semibold uppercase tracking-wider text-[#94A3B8] mb-2 flex items-center gap-1.5">
-                <AlertOctagon className="w-4 h-4 text-[#F87171]" />
-                DETECTED EVIDENCE & LINGUISTIC MARKERS
-              </h4>
-              <div className="space-y-2">
-                {analysis.threatIndicators.map((ind, i) => (
-                  <div
-                    key={i}
-                    className="p-3 rounded-xl bg-[#151B2E] border border-red-500/20 text-xs text-[#F8FAFC] flex items-start gap-2.5"
-                  >
-                    <CornerDownRight className="w-4 h-4 text-[#F87171] shrink-0 mt-0.5" />
-                    <div>
-                      <strong className="text-[#F87171]">Marker {i + 1}: </strong>
-                      <span>{ind}</span>
+            {/* Evidence markers */}
+            {analysis.threatIndicators.length > 0 && (
+              <div>
+                <h4
+                  className="text-[11px] font-medium mb-2"
+                  style={{ color: "var(--text-muted)" }}
+                >
+                  Detected evidence & linguistic markers
+                </h4>
+                <div className="space-y-1.5">
+                  {analysis.threatIndicators.map((ind, i) => (
+                    <div
+                      key={i}
+                      className="px-3 py-2 rounded-md text-[12px] flex items-start gap-2.5"
+                      style={{
+                        background: "var(--sev-critical-bg)",
+                        borderLeft: "2px solid var(--sev-critical)",
+                        color: "var(--text-primary)",
+                      }}
+                    >
+                      <CornerDownRight className="w-3.5 h-3.5 shrink-0 mt-0.5" style={{ color: "var(--sev-critical)" }} />
+                      <div>
+                        <strong style={{ color: "var(--sev-critical)" }}>Marker {i + 1}: </strong>
+                        <span>{ind}</span>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
-            {/* Plain-English Explanation */}
+            {/* Explanation */}
             <div>
-              <h4 className="text-xs font-semibold uppercase tracking-wider text-[#94A3B8] mb-1.5">
-                SAFETY EXPLANATION
+              <h4 className="text-[11px] font-medium mb-1.5" style={{ color: "var(--text-muted)" }}>
+                Safety explanation
               </h4>
-              <p className="text-xs text-[#94A3B8] leading-relaxed bg-[#151B2E] p-3.5 rounded-xl border border-[#253149]">
+              <p
+                className="text-[12px] leading-relaxed p-3 rounded-md"
+                style={{
+                  background: "var(--bg-elevated)",
+                  border: "1px solid var(--border)",
+                  color: "var(--text-secondary)",
+                }}
+              >
                 {analysis.explanation}
               </p>
             </div>

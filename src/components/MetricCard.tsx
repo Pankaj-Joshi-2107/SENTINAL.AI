@@ -22,40 +22,86 @@ export const MetricCard: React.FC<MetricCardProps> = ({
   subtitle,
   icon: Icon,
   trend,
-  accentColor = "text-[#4F7CFF]",
+  accentColor,
   onClick,
   id
 }) => {
+  const iconColor = accentColor
+    ? accentColor.replace("text-[", "").replace("]", "")
+    : "var(--accent)";
+
   return (
     <div
       id={id || `metric-card-${title.toLowerCase().replace(/\s+/g, "-")}`}
       onClick={onClick}
-      className={`bg-[#1D2638] border border-[#253149] rounded-xl p-5 shadow-lg transition-all duration-200 hover:border-[#4F7CFF]/50 hover:bg-[#253149]/50 ${
-        onClick ? "cursor-pointer" : ""
-      }`}
+      className="p-4 rounded-xl transition-all duration-200 group relative"
+      style={{
+        background: "var(--bg-surface)",
+        border: "1px solid var(--border)",
+        boxShadow: "var(--shadow-sm)",
+        cursor: onClick ? "pointer" : "default",
+      }}
+      onMouseEnter={e => {
+        (e.currentTarget as HTMLElement).style.borderColor = "var(--border-active)";
+        (e.currentTarget as HTMLElement).style.transform = "translateY(-2px)";
+        (e.currentTarget as HTMLElement).style.boxShadow = "var(--shadow)";
+      }}
+      onMouseLeave={e => {
+        (e.currentTarget as HTMLElement).style.borderColor = "var(--border)";
+        (e.currentTarget as HTMLElement).style.transform = "translateY(0)";
+        (e.currentTarget as HTMLElement).style.boxShadow = "var(--shadow-sm)";
+      }}
     >
-      <div className="flex items-center justify-between gap-3">
-        <span className="text-xs font-semibold uppercase tracking-wider text-[#94A3B8]">
+      <div className="flex items-start justify-between gap-3">
+        <span
+          className="text-[12px] font-medium leading-tight"
+          style={{ color: "var(--text-secondary)" }}
+        >
           {title}
         </span>
-        <div className={`p-2 rounded-lg bg-[#151B2E] border border-[#253149] ${accentColor}`}>
-          <Icon className="w-5 h-5" />
+        <div
+          className="p-2 rounded-lg shrink-0 transition-transform group-hover:scale-105"
+          style={{
+            background: "var(--accent-subtle)",
+            border: "1px solid var(--accent-border)",
+          }}
+        >
+          <Icon
+            className="w-4 h-4"
+            style={{ color: iconColor.startsWith("var") ? iconColor : iconColor.startsWith("#") ? iconColor : "var(--accent)" }}
+          />
         </div>
       </div>
 
-      <div className="mt-3 flex items-baseline gap-3">
-        <div className="text-2xl font-bold font-mono tracking-tight text-[#F8FAFC]">
+      <div className="mt-2.5 flex items-baseline gap-2.5">
+        <div
+          className="text-2xl font-bold font-mono tracking-tight"
+          style={{ color: "var(--text-primary)" }}
+        >
           {value}
         </div>
         {trend && (
           <span
-            className={`text-xs font-medium px-2 py-0.5 rounded-full ${
-              trend.isAdversarial
-                ? "bg-red-500/15 text-[#F87171] border border-red-500/30"
+            className="text-[10px] font-mono font-semibold px-1.5 py-0.5 rounded-full"
+            style={{
+              background: trend.isAdversarial
+                ? "var(--sev-critical-bg)"
                 : trend.isPositive
-                ? "bg-emerald-500/15 text-[#34D399] border border-emerald-500/30"
-                : "bg-slate-700/50 text-[#94A3B8] border border-slate-600/30"
-            }`}
+                ? "var(--sev-low-bg)"
+                : "rgba(255, 255, 255, 0.05)",
+              color: trend.isAdversarial
+                ? "var(--sev-critical)"
+                : trend.isPositive
+                ? "var(--sev-low)"
+                : "var(--text-muted)",
+              border: `1px solid ${
+                trend.isAdversarial
+                  ? "var(--sev-critical-bd)"
+                  : trend.isPositive
+                  ? "var(--sev-low-bd)"
+                  : "var(--border-muted)"
+              }`
+            }}
           >
             {trend.value}
           </span>
@@ -63,7 +109,10 @@ export const MetricCard: React.FC<MetricCardProps> = ({
       </div>
 
       {subtitle && (
-        <p className="mt-2 text-xs text-[#94A3B8] leading-relaxed">
+        <p
+          className="mt-1.5 text-[11px] leading-relaxed line-clamp-1"
+          style={{ color: "var(--text-muted)" }}
+        >
           {subtitle}
         </p>
       )}

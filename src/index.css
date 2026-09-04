@@ -1,61 +1,169 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 @import "tailwindcss";
 @import "@xyflow/react/dist/style.css";
 
+/* ============================================================
+   SENTINEL-AI DESIGN TOKENS
+   Warm Charcoal & Deliberate Amber-Gold Signature Accent
+   ============================================================ */
 :root {
-  --bg-main: #111827;
-  --bg-secondary: #151B2E;
-  --card-bg: #1D2638;
-  --card-hover: #253149;
-  --primary-blue: #4F7CFF;
-  --accent-purple: #8B5CF6;
-  --accent-cyan: #22D3EE;
-  --status-positive: #34D399;
-  --status-warning: #FBBF24;
-  --status-critical: #F87171;
-  --text-main: #F8FAFC;
-  --text-secondary: #94A3B8;
-  font-family: 'Inter', sans-serif;
+  /* Warm Charcoal Backgrounds (no navy tint) */
+  --bg-base:        #131418;
+  --bg-surface:     #1a1b20;
+  --bg-elevated:    #222329;
+  --bg-hover:       #2a2b33;
+
+  /* Subtle low-opacity borders */
+  --border:         rgba(255, 255, 255, 0.07);
+  --border-muted:   rgba(255, 255, 255, 0.04);
+  --border-active:  rgba(229, 169, 60, 0.35);
+
+  /* Off-white & Muted Warm Gray Typography */
+  --text-primary:   #ededec;
+  --text-secondary: #9e9ea4;
+  --text-muted:     #6a6b72;
+
+  /* Signature Accent — Refined Muted Amber-Gold */
+  --accent:         #e5a93c;
+  --accent-hover:   #f0b74e;
+  --accent-subtle:  rgba(229, 169, 60, 0.12);
+  --accent-border:  rgba(229, 169, 60, 0.25);
+  --accent-text-on: #131418;
+
+  /* Semantic / Status Colors — Muted, Desaturated Signals */
+  --sev-critical:     #e05d52;
+  --sev-critical-bg:  rgba(224, 93, 82, 0.1);
+  --sev-critical-bd:  rgba(224, 93, 82, 0.22);
+
+  --sev-high:         #d97746;
+  --sev-high-bg:      rgba(217, 119, 70, 0.1);
+  --sev-high-bd:      rgba(217, 119, 70, 0.22);
+
+  --sev-medium:       #c99738;
+  --sev-medium-bg:    rgba(201, 151, 56, 0.1);
+  --sev-medium-bd:    rgba(201, 151, 56, 0.22);
+
+  --sev-low:          #5ea880;
+  --sev-low-bg:       rgba(94, 168, 128, 0.1);
+  --sev-low-bd:       rgba(94, 168, 128, 0.22);
+
+  /* Chart & Multidimensional Series Hues */
+  --chart-1: #e5a93c;
+  --chart-2: #7c8b9e;
+  --chart-3: #a68a72;
+  --chart-4: #c99738;
+  --chart-5: #e05d52;
+
+  /* Elevation */
+  --radius:     10px;
+  --radius-sm:  6px;
+  --radius-lg:  14px;
+  --shadow-sm:  0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow:     0 4px 16px -2px rgba(0, 0, 0, 0.45);
+  --shadow-lg:  0 12px 36px -4px rgba(0, 0, 0, 0.55);
+
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
 }
 
+/* ============================================================
+   BASE & ATMOSPHERE
+   ============================================================ */
 body {
-  background-color: #111827;
-  color: #F8FAFC;
+  background-color: var(--bg-base);
+  background-image: 
+    radial-gradient(circle at 50% -80px, rgba(229, 169, 60, 0.04), transparent 50%),
+    radial-gradient(circle at 100% 300px, rgba(255, 255, 255, 0.015), transparent 40%);
+  background-attachment: fixed;
+  color: var(--text-primary);
   overflow-x: hidden;
+  min-height: 100vh;
 }
 
+/* ============================================================
+   TYPOGRAPHY HELPERS
+   ============================================================ */
 .font-mono {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'JetBrains Mono', 'Cascadia Code', 'Fira Code', monospace;
 }
 
-/* Custom scrollbars */
+/* ============================================================
+   SCROLLBARS
+   ============================================================ */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #111827;
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #253149;
-  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #4F7CFF;
+  background: rgba(255, 255, 255, 0.18);
 }
 
-/* React Flow customizations for Dark Theme */
+/* ============================================================
+   CARD / PANEL HELPERS
+   ============================================================ */
+.glass-panel {
+  background: rgba(26, 27, 32, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border);
+}
+
+.card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.03), var(--shadow-sm);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.card-hover:hover {
+  border-color: var(--border-active);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px -4px rgba(0, 0, 0, 0.5), 0 0 12px -2px rgba(229, 169, 60, 0.08);
+}
+
+/* ============================================================
+   SEVERITY LEFT-BORDER INDICATORS (SUBTLE)
+   ============================================================ */
+.sev-border-critical { border-left: 2px solid var(--sev-critical); }
+.sev-border-high     { border-left: 2px solid var(--sev-high); }
+.sev-border-medium   { border-left: 2px solid var(--sev-medium); }
+
+/* ============================================================
+   REACT FLOW CUSTOMIZATIONS
+   ============================================================ */
 .react-flow__pane {
-  background: #151B2E !important;
+  background: var(--bg-base) !important;
+}
+.react-flow__controls {
+  background: var(--bg-surface) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--radius) !important;
+  box-shadow: var(--shadow) !important;
+  overflow: hidden;
 }
 .react-flow__controls button {
-  background-color: #1D2638 !important;
-  color: #F8FAFC !important;
-  border-color: #253149 !important;
-  fill: #F8FAFC !important;
+  background-color: var(--bg-surface) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border) !important;
+  fill: var(--text-primary) !important;
+  border-bottom: 1px solid var(--border) !important;
 }
 .react-flow__controls button:hover {
-  background-color: #253149 !important;
+  background-color: var(--bg-elevated) !important;
 }
 .react-flow__attribution {
   display: none;
+}
+.react-flow__minimap {
+  background: var(--bg-surface) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--radius) !important;
 }

@@ -1,7 +1,7 @@
 import React from "react";
 import { ThreatAlert } from "../types";
 import { ThreatBadge } from "./ThreatBadge";
-import { ArrowRight, AlertOctagon } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 interface AlertCardProps {
   alert: ThreatAlert;
@@ -9,37 +9,68 @@ interface AlertCardProps {
 }
 
 export const AlertCard: React.FC<AlertCardProps> = ({ alert, onInvestigate }) => {
+  const getSevColor = () => {
+    switch (alert.severity) {
+      case "CRITICAL": return "var(--sev-critical)";
+      case "HIGH": return "var(--sev-high)";
+      case "MEDIUM": return "var(--sev-medium)";
+      default: return "var(--sev-low)";
+    }
+  };
+
+  const getSevBg = () => {
+    switch (alert.severity) {
+      case "CRITICAL": return "var(--sev-critical-bg)";
+      case "HIGH": return "var(--sev-high-bg)";
+      case "MEDIUM": return "var(--sev-medium-bg)";
+      default: return "var(--sev-low-bg)";
+    }
+  };
+
   return (
     <div
       id={`alert-card-${alert.id}`}
-      className="bg-[#1D2638] border border-[#253149] rounded-xl p-4 shadow-md hover:border-[#4F7CFF]/50 transition-all flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+      className="p-4 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-all duration-200 group"
+      style={{
+        background: "var(--bg-surface)",
+        border: "1px solid var(--border)",
+        boxShadow: "inset 0 1px 0 0 rgba(255, 255, 255, 0.04), 0 2px 8px -2px rgba(0, 0, 0, 0.4)",
+        borderLeft: `3px solid ${getSevColor()}`,
+      }}
+      onMouseEnter={e => {
+        (e.currentTarget as HTMLElement).style.borderColor = "var(--border-active)";
+        (e.currentTarget as HTMLElement).style.borderLeftColor = getSevColor();
+        (e.currentTarget as HTMLElement).style.transform = "translateY(-1px)";
+        (e.currentTarget as HTMLElement).style.boxShadow = "0 8px 24px -4px rgba(0, 0, 0, 0.6)";
+      }}
+      onMouseLeave={e => {
+        (e.currentTarget as HTMLElement).style.borderColor = "var(--border)";
+        (e.currentTarget as HTMLElement).style.borderLeftColor = getSevColor();
+        (e.currentTarget as HTMLElement).style.transform = "translateY(0)";
+        (e.currentTarget as HTMLElement).style.boxShadow = "inset 0 1px 0 0 rgba(255, 255, 255, 0.04), 0 2px 8px -2px rgba(0, 0, 0, 0.4)";
+      }}
     >
-      <div className="flex items-start gap-3">
-        <div
-          className={`p-2 rounded-lg mt-0.5 ${
-            alert.severity === "CRITICAL"
-              ? "bg-red-500/15 text-[#F87171] border border-red-500/30"
-              : alert.severity === "HIGH"
-              ? "bg-rose-500/15 text-[#F87171] border border-rose-500/30"
-              : alert.severity === "MEDIUM"
-              ? "bg-amber-500/15 text-[#FBBF24] border border-amber-500/30"
-              : "bg-emerald-500/15 text-[#34D399] border border-emerald-500/30"
-          }`}
-        >
-          <AlertOctagon className="w-5 h-5" />
-        </div>
-
+      <div className="flex items-start gap-3 min-w-0">
         <div>
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2 mb-1.5">
             <ThreatBadge level={alert.severity} size="sm" />
-            <h4 className="text-sm font-semibold text-[#F8FAFC]">
+            <h4
+              className="text-[13px] font-semibold tracking-tight"
+              style={{ color: "var(--text-primary)" }}
+            >
               {alert.title}
             </h4>
-            <span className="text-[11px] text-[#94A3B8] font-mono">
-              • {alert.timestamp}
+            <span
+              className="text-[11px] font-mono"
+              style={{ color: "var(--text-muted)" }}
+            >
+              {alert.timestamp}
             </span>
           </div>
-          <p className="mt-1 text-xs text-[#94A3B8] leading-relaxed max-w-2xl">
+          <p
+            className="text-[12px] leading-relaxed max-w-2xl"
+            style={{ color: "var(--text-secondary)" }}
+          >
             {alert.description}
           </p>
         </div>
@@ -47,10 +78,13 @@ export const AlertCard: React.FC<AlertCardProps> = ({ alert, onInvestigate }) =>
 
       <button
         onClick={() => onInvestigate(alert.targetRoute, alert.targetId)}
-        className="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#151B2E] hover:bg-[#4F7CFF] text-xs font-semibold text-[#F8FAFC] border border-[#253149] hover:border-[#4F7CFF] transition-all"
+        className="shrink-0 inline-flex items-center gap-1.5 text-[12px] font-medium transition-all group-hover:translate-x-0.5"
+        style={{ color: "var(--accent)" }}
+        onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = "var(--accent-hover)"}
+        onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = "var(--accent)"}
       >
         <span>Investigate</span>
-        <ArrowRight className="w-3.5 h-3.5" />
+        <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
       </button>
     </div>
   );

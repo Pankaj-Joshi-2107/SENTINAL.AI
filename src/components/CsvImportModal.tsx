@@ -192,25 +192,47 @@ export const CsvImportModal: React.FC<CsvImportModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-150">
-      <div className="bg-[#151B2E] border border-[#253149] rounded-2xl w-full max-w-xl shadow-2xl overflow-hidden flex flex-col">
+      <div
+        className="rounded-2xl w-full max-w-xl shadow-2xl overflow-hidden flex flex-col"
+        style={{ background: "var(--bg-surface)", border: "1px solid var(--border)" }}
+      >
         {/* Header */}
-        <div className="p-5 border-b border-[#253149] bg-[#1D2638] flex items-center justify-between">
+        <div
+          className="p-5 flex items-center justify-between"
+          style={{ background: "var(--bg-elevated)", borderBottom: "1px solid var(--border)" }}
+        >
           <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-lg bg-[#4F7CFF]/15 text-[#4F7CFF] border border-[#4F7CFF]/30">
+            <div
+              className="p-2 rounded-lg"
+              style={{
+                background: "var(--accent-subtle)",
+                color: "var(--accent)",
+                border: "1px solid var(--accent-border)",
+              }}
+            >
               <UploadCloud className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-sm font-bold text-[#F8FAFC]">
-                IMPORT SOCIAL DATASET (CSV)
+              <h3 className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
+                Import Social Dataset (CSV)
               </h3>
-              <p className="text-xs text-[#94A3B8]">
+              <p className="text-xs" style={{ color: "var(--text-muted)" }}>
                 Upload custom social media posts to recompute analytics dynamically.
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1 rounded-lg text-[#94A3B8] hover:text-[#F8FAFC] hover:bg-[#253149]"
+            className="p-1 rounded-lg transition-colors"
+            style={{ color: "var(--text-muted)" }}
+            onMouseEnter={e => {
+              (e.currentTarget as HTMLElement).style.color = "var(--text-primary)";
+              (e.currentTarget as HTMLElement).style.background = "var(--bg-hover)";
+            }}
+            onMouseLeave={e => {
+              (e.currentTarget as HTMLElement).style.color = "var(--text-muted)";
+              (e.currentTarget as HTMLElement).style.background = "transparent";
+            }}
           >
             <X className="w-5 h-5" />
           </button>
@@ -224,11 +246,11 @@ export const CsvImportModal: React.FC<CsvImportModalProps> = ({
             onDragOver={handleDrag}
             onDrop={handleDrop}
             onClick={() => fileInputRef.current?.click()}
-            className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all ${
-              dragActive
-                ? "border-[#4F7CFF] bg-[#4F7CFF]/10"
-                : "border-[#253149] hover:border-[#4F7CFF]/50 bg-[#111827]"
-            }`}
+            className="border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all"
+            style={{
+              borderColor: dragActive ? "var(--accent)" : "var(--border)",
+              background: dragActive ? "var(--accent-subtle)" : "var(--bg-base)",
+            }}
           >
             <input
               ref={fileInputRef}
@@ -237,21 +259,28 @@ export const CsvImportModal: React.FC<CsvImportModalProps> = ({
               onChange={handleChange}
               className="hidden"
             />
-            <FileText className="w-10 h-10 text-[#4F7CFF] mx-auto mb-3 opacity-80" />
-            <p className="text-sm font-semibold text-[#F8FAFC]">
+            <FileText className="w-10 h-10 mx-auto mb-3 opacity-80" style={{ color: "var(--accent)" }} />
+            <p className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
               {fileName ? fileName : "Drag & drop CSV file or click to browse"}
             </p>
-            <p className="text-xs text-[#94A3B8] mt-1">
+            <p className="text-xs mt-1" style={{ color: "var(--text-muted)" }}>
               Supports CSV with standard columns: id, username, platform, timestamp, text, hashtags, url, likes, comments, shares, followers
             </p>
           </div>
 
           {error && (
-            <div className="p-3.5 rounded-xl bg-red-500/15 border border-red-500/30 text-xs text-[#F87171] flex items-start gap-2.5">
+            <div
+              className="p-3.5 rounded-xl text-xs flex items-start gap-2.5"
+              style={{
+                background: "var(--sev-critical-bg)",
+                border: "1px solid var(--sev-critical-bd)",
+                color: "var(--sev-critical)",
+              }}
+            >
               <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
               <div>
                 <span className="font-bold">Validation Error:</span> {error}
-                <p className="text-[11px] text-[#94A3B8] mt-1">
+                <p className="text-[11px] mt-1" style={{ color: "var(--text-secondary)" }}>
                   Reverting to built-in synthetic dataset to guarantee uninterrupted operation.
                 </p>
               </div>
@@ -259,13 +288,27 @@ export const CsvImportModal: React.FC<CsvImportModalProps> = ({
           )}
 
           {warning && (
-            <div className="p-3 rounded-xl bg-amber-500/15 border border-amber-500/30 text-xs text-[#FBBF24]">
+            <div
+              className="p-3 rounded-xl text-xs"
+              style={{
+                background: "var(--sev-medium-bg)",
+                border: "1px solid var(--sev-medium-bd)",
+                color: "var(--sev-medium)",
+              }}
+            >
               {warning}
             </div>
           )}
 
           {parsedPosts && !error && (
-            <div className="p-3.5 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-xs text-[#34D399] flex items-center justify-between">
+            <div
+              className="p-3.5 rounded-xl text-xs flex items-center justify-between"
+              style={{
+                background: "var(--sev-low-bg)",
+                border: "1px solid var(--sev-low-bd)",
+                color: "var(--sev-low)",
+              }}
+            >
               <div className="flex items-center gap-2">
                 <CheckCircle2 className="w-4 h-4" />
                 <span>
@@ -276,24 +319,40 @@ export const CsvImportModal: React.FC<CsvImportModalProps> = ({
           )}
 
           {/* Sample template info */}
-          <div className="bg-[#111827] p-3 rounded-xl border border-[#253149] text-[11px] text-[#94A3B8]">
-            <span className="font-semibold text-[#F8FAFC] block mb-1">
+          <div
+            className="p-3 rounded-xl text-[11px]"
+            style={{
+              background: "var(--bg-base)",
+              border: "1px solid var(--border)",
+              color: "var(--text-secondary)",
+            }}
+          >
+            <span className="font-semibold block mb-1" style={{ color: "var(--text-primary)" }}>
               Expected CSV Header Format:
             </span>
-            <code className="font-mono text-[10px] text-[#22D3EE] block overflow-x-auto">
+            <code className="font-mono text-[10px] block overflow-x-auto" style={{ color: "var(--accent)" }}>
               id,username,platform,timestamp,text,hashtags,url,likes,comments,shares,followers
             </code>
           </div>
         </div>
 
         {/* Footer */}
-        <div className="p-4 border-t border-[#253149] bg-[#1D2638] flex items-center justify-between">
+        <div
+          className="p-4 flex items-center justify-between"
+          style={{
+            background: "var(--bg-elevated)",
+            borderTop: "1px solid var(--border)",
+          }}
+        >
           <button
             onClick={() => {
               onResetToDemo();
               onClose();
             }}
-            className="text-xs font-medium text-[#94A3B8] hover:text-[#F8FAFC] flex items-center gap-1.5"
+            className="text-xs font-medium flex items-center gap-1.5 transition-colors"
+            style={{ color: "var(--text-secondary)" }}
+            onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = "var(--text-primary)"}
+            onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = "var(--text-secondary)"}
           >
             <RefreshCw className="w-3.5 h-3.5" />
             Reset to Synthetic Default
@@ -302,7 +361,20 @@ export const CsvImportModal: React.FC<CsvImportModalProps> = ({
           <div className="flex items-center gap-2">
             <button
               onClick={onClose}
-              className="px-3.5 py-1.5 rounded-lg bg-[#151B2E] text-xs text-[#94A3B8] hover:text-[#F8FAFC]"
+              className="px-3.5 py-1.5 rounded-lg text-xs transition-colors"
+              style={{
+                background: "var(--bg-surface)",
+                border: "1px solid var(--border)",
+                color: "var(--text-secondary)",
+              }}
+              onMouseEnter={e => {
+                (e.currentTarget as HTMLElement).style.color = "var(--text-primary)";
+                (e.currentTarget as HTMLElement).style.background = "var(--bg-hover)";
+              }}
+              onMouseLeave={e => {
+                (e.currentTarget as HTMLElement).style.color = "var(--text-secondary)";
+                (e.currentTarget as HTMLElement).style.background = "var(--bg-surface)";
+              }}
             >
               Cancel
             </button>
@@ -310,13 +382,15 @@ export const CsvImportModal: React.FC<CsvImportModalProps> = ({
               id="btn-confirm-csv-analysis"
               disabled={!parsedPosts || parsedPosts.length === 0}
               onClick={handleAnalyze}
-              className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                parsedPosts && parsedPosts.length > 0
-                  ? "bg-[#4F7CFF] hover:bg-[#4F7CFF]/90 text-white cursor-pointer shadow-md"
-                  : "bg-[#253149] text-[#94A3B8] cursor-not-allowed"
-              }`}
+              className="px-4 py-1.5 rounded-lg text-xs font-semibold transition-all"
+              style={{
+                background: parsedPosts && parsedPosts.length > 0 ? "var(--accent)" : "var(--bg-surface)",
+                color: parsedPosts && parsedPosts.length > 0 ? "var(--accent-text-on)" : "var(--text-muted)",
+                cursor: parsedPosts && parsedPosts.length > 0 ? "pointer" : "not-allowed",
+                border: `1px solid ${parsedPosts && parsedPosts.length > 0 ? "var(--accent-border)" : "var(--border)"}`,
+              }}
             >
-              ANALYZE DATASET
+              Analyze Dataset
             </button>
           </div>
         </div>

@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import {
   ActiveTab,
   Post,
@@ -19,6 +19,8 @@ import { ThreatSimulationModal } from "./components/ThreatSimulationModal";
 import { CsvImportModal } from "./components/CsvImportModal";
 
 // Views
+import { LandingPageView } from "./views/LandingPageView";
+import { LoginView } from "./views/LoginView";
 import { OverviewView } from "./views/OverviewView";
 import { SocialAnalyticsView } from "./views/SocialAnalyticsView";
 import { PostAnalyzerView } from "./views/PostAnalyzerView";
@@ -31,6 +33,33 @@ import { ThreatCenterView } from "./views/ThreatCenterView";
 import { SettingsView } from "./views/SettingsView";
 
 export default function App() {
+  // Top-level Application Route: "/" -> landing, "/login" -> login, "/dashboard" -> dashboard
+  const getInitialRoute = (): "landing" | "login" | "dashboard" => {
+    const p = window.location.pathname.toLowerCase();
+    if (p === "/login") return "login";
+    if (p === "/dashboard" || p === "/app") return "dashboard";
+    return "landing";
+  };
+
+  const [currentRoute, setCurrentRoute] = useState<"landing" | "login" | "dashboard">(getInitialRoute);
+
+  useEffect(() => {
+    const handlePopState = () => {
+      setCurrentRoute(getInitialRoute());
+    };
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, []);
+
+  const navigateTo = (route: "landing" | "login" | "dashboard") => {
+    setCurrentRoute(route);
+    const targetPath = route === "landing" ? "/" : route === "login" ? "/login" : "/dashboard";
+    if (window.location.pathname !== targetPath) {
+      window.history.pushState({}, "", targetPath);
+    }
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   // Navigation & View State
   const [activeTab, setActiveTab] = useState<ActiveTab>("overview");
   const [activeScenario, setActiveScenario] = useState<"all" | "normal" | "cyberbullying" | "coordinated">("all");
@@ -148,8 +177,29 @@ export default function App() {
     setSelectedAccountUsername(null);
   };
 
+  // Route 1: Landing Page (Public root)
+  if (currentRoute === "landing") {
+    return (
+      <LandingPageView
+        onNavigateToLogin={() => navigateTo("login")}
+        onNavigateToDashboard={() => navigateTo("dashboard")}
+      />
+    );
+  }
+
+  // Route 2: Mock Login Page (Authentication placeholder)
+  if (currentRoute === "login") {
+    return (
+      <LoginView
+        onLoginSuccess={() => navigateTo("dashboard")}
+        onBackToLanding={() => navigateTo("landing")}
+      />
+    );
+  }
+
+  // Route 3: Full Dashboard Workstation
   return (
-    <div className="flex h-screen bg-[#111827] text-[#F8FAFC] font-sans antialiased overflow-hidden">
+    <div className="flex h-screen font-sans antialiased overflow-hidden" style={{ background: 'var(--bg-base)', color: 'var(--text-primary)' }}>
       {/* Sidebar Navigation */}
       <Sidebar
         activeTab={activeTab}
@@ -159,6 +209,7 @@ export default function App() {
         onOpenSimulation={() => setIsSimulationOpen(true)}
         onOpenCsvImport={() => setIsCsvModalOpen(true)}
         threatCount={alerts.length}
+        onNavigateHome={() => navigateTo("landing")}
       />
 
       {/* Main Content Area */}
@@ -171,7 +222,7 @@ export default function App() {
         />
 
         {/* Dynamic Page Views */}
-        <main className="flex-1 p-6 max-w-7xl w-full mx-auto pb-16">
+        <main className="flex-1 px-6 py-6 lg:px-8 max-w-[1440px] w-full mx-auto pb-12">
           {activeTab === "overview" && (
             <OverviewView
               posts={currentPosts}

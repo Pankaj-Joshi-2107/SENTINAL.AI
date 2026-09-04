@@ -3,17 +3,10 @@ import { Campaign, Account, Post } from "../types";
 import { ThreatScoreGauge } from "../components/ThreatScoreGauge";
 import { ThreatBadge } from "../components/ThreatBadge";
 import {
-  ShieldAlert,
   Network,
-  Users,
   Repeat,
-  Clock,
-  ExternalLink,
   History,
-  CheckCircle2,
   ChevronRight,
-  TrendingDown,
-  Layers
 } from "lucide-react";
 
 interface CampaignIntelligenceViewProps {
@@ -55,37 +48,34 @@ export const CampaignIntelligenceView: React.FC<CampaignIntelligenceViewProps> =
     accountsList.includes(a.username)
   );
 
-  const campaignPosts = posts.filter(
-    (p) => p.campaignId === currentCampaign?.id || (currentCampaign?.posts && currentCampaign.posts.includes(p.id))
-  );
+  const sigBarColors = ["var(--chart-1)", "var(--chart-2)", "var(--chart-3)", "var(--chart-4)", "var(--chart-5)"];
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-200">
-      {/* View Header */}
-      <div className="bg-[#151B2E] border border-[#253149] p-6 rounded-2xl shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div className="space-y-5 animate-in fade-in duration-200">
+      {/* Header */}
+      <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-black text-[#F8FAFC] flex items-center gap-2.5">
-            <ShieldAlert className="w-7 h-7 text-[#F87171]" />
-            CAMPAIGN INTELLIGENCE
+          <h1 className="text-xl font-semibold" style={{ color: "var(--text-primary)" }}>
+            Campaign Intelligence
           </h1>
-          <p className="text-xs text-[#94A3B8] mt-1">
-            Algorithmic detection of coordinated inauthentic behavior, narrative manipulation swarms, and synthetic astroturfing.
+          <p className="text-[13px] mt-1" style={{ color: "var(--text-secondary)" }}>
+            Algorithmic detection of coordinated inauthentic behavior, narrative manipulation, and synthetic astroturfing.
           </p>
         </div>
-
-        <div className="flex items-center gap-3">
-          <button
-            id="btn-view-network-campaign"
-            onClick={() => onNavigateToNetwork(currentCampaign?.id)}
-            className="px-4 py-2 rounded-xl bg-[#4F7CFF] hover:bg-[#4F7CFF]/90 text-white text-xs font-bold flex items-center gap-2 shadow-lg shadow-blue-500/20 transition-all cursor-pointer"
-          >
-            <Network className="w-4 h-4" />
-            <span>VIEW NETWORK GRAPH</span>
-          </button>
-        </div>
+        <button
+          id="btn-view-network-campaign"
+          onClick={() => onNavigateToNetwork(currentCampaign?.id)}
+          className="px-3 py-2 rounded-md text-[13px] font-semibold flex items-center gap-2 shrink-0 transition-colors"
+          style={{ background: "var(--accent)", color: "var(--accent-text-on)" }}
+          onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = "var(--accent-hover)"}
+          onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = "var(--accent)"}
+        >
+          <Network className="w-4 h-4" />
+          <span>Network graph</span>
+        </button>
       </div>
 
-      {/* Campaign Selector Pills */}
+      {/* Campaign Selector */}
       <div className="flex items-center gap-2 overflow-x-auto pb-1">
         {campaigns.map((camp) => {
           const isSelected = currentCampaign?.id === camp.id;
@@ -93,16 +83,16 @@ export const CampaignIntelligenceView: React.FC<CampaignIntelligenceViewProps> =
             <button
               key={camp.id}
               onClick={() => onSelectCampaign(camp.id)}
-              className={`px-4 py-2.5 rounded-xl border text-xs font-mono font-bold flex items-center gap-2.5 transition-all whitespace-nowrap cursor-pointer ${
-                isSelected
-                  ? "bg-[#1D2638] border-[#4F7CFF] text-[#F8FAFC] shadow-md shadow-blue-500/10"
-                  : "bg-[#151B2E] border-[#253149] text-[#94A3B8] hover:text-[#F8FAFC]"
-              }`}
+              className="px-3.5 py-2 rounded-md text-[12px] font-medium flex items-center gap-2 transition-colors whitespace-nowrap shrink-0"
+              style={{
+                background: isSelected ? "var(--accent-subtle)" : "var(--bg-elevated)",
+                border: `1px solid ${isSelected ? "var(--accent-border)" : "var(--border)"}`,
+                color: isSelected ? "var(--accent)" : "var(--text-secondary)",
+              }}
             >
               <span
-                className={`w-2 h-2 rounded-full ${
-                  camp.threatLevel === "CRITICAL" ? "bg-[#F87171] animate-pulse" : "bg-[#FBBF24]"
-                }`}
+                className="w-1.5 h-1.5 rounded-full"
+                style={{ background: camp.threatLevel === "CRITICAL" ? "var(--sev-critical)" : "var(--sev-medium)" }}
               />
               <span>{camp.name}</span>
               <ThreatBadge level={camp.threatLevel} size="sm" showScore={camp.threatScore} />
@@ -112,113 +102,130 @@ export const CampaignIntelligenceView: React.FC<CampaignIntelligenceViewProps> =
       </div>
 
       {currentCampaign && (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          {/* Left: Detailed Campaign Overview & Scoring (7 cols) */}
-          <div className="lg:col-span-7 space-y-6">
-            {/* Main Campaign Card */}
-            <div className="bg-[#1D2638] border border-[#253149] rounded-2xl p-6 shadow-xl space-y-5">
-              <div className="flex flex-wrap items-start justify-between gap-4 pb-4 border-b border-[#253149]">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
+          {/* Left: Campaign Details (7 cols) */}
+          <div className="lg:col-span-7 space-y-5">
+            {/* Main campaign card */}
+            <div
+              className="rounded-lg p-5 space-y-4"
+              style={{ background: "var(--bg-surface)", border: "1px solid var(--border)" }}
+            >
+              <div
+                className="flex flex-wrap items-start justify-between gap-4 pb-4"
+                style={{ borderBottom: "1px solid var(--border-muted)" }}
+              >
                 <div>
-                  <div className="flex items-center gap-2">
-                    <span className="font-mono text-xs text-[#94A3B8]">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="font-mono text-[11px]" style={{ color: "var(--text-muted)" }}>
                       {currentCampaign.id}
                     </span>
-                    <span className="text-xs font-mono text-[#F87171] bg-red-500/10 px-2 py-0.5 rounded border border-red-500/20 uppercase font-bold">
+                    <span
+                      className="text-[10px] font-mono px-1.5 py-0.5 rounded"
+                      style={{
+                        background: "var(--sev-critical-bg)",
+                        color: "var(--sev-critical)",
+                        border: "1px solid var(--sev-critical-bd)"
+                      }}
+                    >
                       {targetNarrative}
                     </span>
                   </div>
-                  <h2 className="text-xl font-black text-[#F8FAFC] mt-1">
+                  <h2 className="text-lg font-semibold" style={{ color: "var(--text-primary)" }}>
                     {currentCampaign.name}
                   </h2>
-                  <p className="text-xs text-[#94A3B8] mt-1 leading-relaxed">
+                  <p className="text-[12px] mt-1 leading-relaxed" style={{ color: "var(--text-secondary)" }}>
                     {summaryDesc}
                   </p>
                 </div>
-
-                <div className="flex items-center gap-2">
-                  <ThreatBadge level={currentCampaign.threatLevel} size="lg" />
-                </div>
+                <ThreatBadge level={currentCampaign.threatLevel} size="lg" />
               </div>
 
-              {/* 4 Summary Stats */}
+              {/* 4 stats */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center font-mono">
-                <div className="bg-[#151B2E] p-3 rounded-xl border border-[#253149]">
-                  <span className="text-[10px] text-[#94A3B8] block">COORDINATION</span>
-                  <span className="text-xl font-bold text-[#4F7CFF]">
-                    {currentCampaign.coordinationScore}%
-                  </span>
-                </div>
-
-                <div className="bg-[#151B2E] p-3 rounded-xl border border-[#253149]">
-                  <span className="text-[10px] text-[#94A3B8] block">THREAT SCORE</span>
-                  <span className="text-xl font-bold text-[#F87171]">
-                    {currentCampaign.threatScore} / 100
-                  </span>
-                </div>
-
-                <div className="bg-[#151B2E] p-3 rounded-xl border border-[#253149]">
-                  <span className="text-[10px] text-[#94A3B8] block">ACCOUNTS</span>
-                  <span className="text-xl font-bold text-[#F8FAFC]">
-                    {accountsList.length} Nodes
-                  </span>
-                </div>
-
-                <div className="bg-[#151B2E] p-3 rounded-xl border border-[#253149]">
-                  <span className="text-[10px] text-[#94A3B8] block">BURST WINDOW</span>
-                  <span className="text-xl font-bold text-[#22D3EE]">
-                    {burstWindow}
-                  </span>
-                </div>
+                {[
+                  { label: "Coordination", val: `${currentCampaign.coordinationScore}%`, color: "var(--accent)" },
+                  { label: "Threat score", val: `${currentCampaign.threatScore} / 100`, color: "var(--sev-critical)" },
+                  { label: "Accounts", val: `${accountsList.length} nodes`, color: "var(--text-primary)" },
+                  { label: "Burst window", val: burstWindow, color: "var(--sev-medium)" },
+                ].map((stat) => (
+                  <div
+                    key={stat.label}
+                    className="p-3 rounded-md"
+                    style={{ background: "var(--bg-elevated)", border: "1px solid var(--border)" }}
+                  >
+                    <span className="text-[10px] block mb-1" style={{ color: "var(--text-muted)" }}>
+                      {stat.label}
+                    </span>
+                    <span className="text-base font-bold block" style={{ color: stat.color }}>
+                      {stat.val}
+                    </span>
+                  </div>
+                ))}
               </div>
 
-              {/* 5-Signal Coordination Score Breakdown */}
-              <div className="pt-2 border-t border-[#253149] space-y-3">
+              {/* 5-signal breakdown */}
+              <div className="pt-3 space-y-2.5" style={{ borderTop: "1px solid var(--border-muted)" }}>
                 <div className="flex items-center justify-between">
-                  <h4 className="text-xs font-semibold uppercase tracking-wider text-[#94A3B8]">
-                    5-SIGNAL COORDINATION SCORE BREAKDOWN
+                  <h4 className="text-[12px] font-medium" style={{ color: "var(--text-secondary)" }}>
+                    5-Signal coordination breakdown
                   </h4>
-                  <span className="text-xs font-mono text-[#4F7CFF] font-bold">
+                  <span className="text-[11px] font-mono font-semibold" style={{ color: "var(--accent)" }}>
                     Composite: {currentCampaign.coordinationScore}%
                   </span>
                 </div>
-
-                <div className="space-y-2.5">
+                <div className="space-y-2">
                   {[
-                    { label: "1. Time Synchronicity", desc: "Posting latency clustered within 5-minute interval", val: coordinationSignals.timeSynchronicity, color: "bg-[#4F7CFF]" },
-                    { label: "2. Content Similarity", desc: "TF-IDF N-gram overlap of phrases & claims", val: coordinationSignals.contentSimilarity, color: "bg-[#8B5CF6]" },
-                    { label: "3. Hashtag Overlap", desc: "Shared hashtag co-occurrence across disjoint authors", val: coordinationSignals.hashtagOverlap, color: "bg-[#22D3EE]" },
-                    { label: "4. Account Age Distribution", desc: "Suspiciously recent account creations (<14 days)", val: coordinationSignals.accountAgeDistribution, color: "bg-[#FBBF24]" },
-                    { label: "5. URL Co-occurrence", desc: "Identical shortened/obfuscated hyperlink dissemination", val: coordinationSignals.urlCooccurrence, color: "bg-[#F87171]" },
+                    { label: "1. Time synchronicity", desc: "Posting latency within 5-minute interval", val: coordinationSignals.timeSynchronicity },
+                    { label: "2. Content similarity", desc: "TF-IDF N-gram overlap", val: coordinationSignals.contentSimilarity },
+                    { label: "3. Hashtag overlap", desc: "Shared hashtag co-occurrence", val: coordinationSignals.hashtagOverlap },
+                    { label: "4. Account age distribution", desc: "Accounts <14 days old", val: coordinationSignals.accountAgeDistribution },
+                    { label: "5. URL co-occurrence", desc: "Shared obfuscated links", val: coordinationSignals.urlCooccurrence },
                   ].map((sig, i) => (
-                    <div key={i} className="text-xs bg-[#151B2E] p-2.5 rounded-xl border border-[#253149]">
+                    <div
+                      key={i}
+                      className="text-[12px] p-2.5 rounded-md"
+                      style={{ background: "var(--bg-elevated)", border: "1px solid var(--border)" }}
+                    >
                       <div className="flex justify-between items-center mb-1">
-                        <span className="font-semibold text-[#F8FAFC]">{sig.label}</span>
-                        <span className="font-mono font-bold text-[#F8FAFC]">{sig.val}%</span>
+                        <span className="font-medium" style={{ color: "var(--text-primary)" }}>{sig.label}</span>
+                        <span className="font-mono font-semibold" style={{ color: "var(--text-secondary)" }}>
+                          {sig.val}%
+                        </span>
                       </div>
-                      <div className="w-full h-1.5 bg-[#111827] rounded-full overflow-hidden mb-1">
-                        <div className={`h-full ${sig.color} rounded-full`} style={{ width: `${sig.val}%` }} />
+                      <div className="w-full h-1.5 rounded-full overflow-hidden mb-1" style={{ background: "var(--bg-surface)" }}>
+                        <div
+                          className="h-full rounded-full"
+                          style={{ width: `${sig.val}%`, background: sigBarColors[i] }}
+                        />
                       </div>
-                      <span className="text-[10px] text-[#94A3B8]">{sig.desc}</span>
+                      <span className="text-[10px]" style={{ color: "var(--text-muted)" }}>{sig.desc}</span>
                     </div>
                   ))}
                 </div>
               </div>
 
-              {/* Repeated Phrases */}
-              <div className="pt-2 border-t border-[#253149]">
-                <h4 className="text-xs font-semibold uppercase tracking-wider text-[#94A3B8] mb-2 flex items-center gap-1.5">
-                  <Repeat className="w-3.5 h-3.5 text-[#22D3EE]" />
-                  REPEATED PHRASES & ASTROTURF CLUSTERS
+              {/* Repeated phrases */}
+              <div className="pt-3" style={{ borderTop: "1px solid var(--border-muted)" }}>
+                <h4
+                  className="text-[12px] font-medium mb-2 flex items-center gap-1.5"
+                  style={{ color: "var(--text-secondary)" }}
+                >
+                  <Repeat className="w-3.5 h-3.5" style={{ color: "var(--accent)" }} />
+                  Repeated phrases & astroturf clusters
                 </h4>
                 <div className="space-y-1.5">
                   {currentCampaign.repeatedPhrases.map((phrase, idx) => (
                     <div
                       key={idx}
-                      className="p-2.5 rounded-lg bg-[#151B2E] border border-[#253149] text-xs text-[#F8FAFC] font-mono flex items-center justify-between"
+                      className="p-2.5 rounded-md text-[12px] font-mono flex items-center justify-between"
+                      style={{ background: "var(--bg-elevated)", border: "1px solid var(--border)" }}
                     >
-                      <span className="text-[#22D3EE]">"{phrase}"</span>
-                      <span className="text-[10px] text-[#94A3B8] bg-[#111827] px-2 py-0.5 rounded">
-                        Repeated across {accountsList.length} accounts
+                      <span style={{ color: "var(--accent)" }}>"{phrase}"</span>
+                      <span
+                        className="text-[10px] px-1.5 py-0.5 rounded"
+                        style={{ background: "var(--bg-surface)", color: "var(--text-muted)" }}
+                      >
+                        ×{accountsList.length} accounts
                       </span>
                     </div>
                   ))}
@@ -226,94 +233,122 @@ export const CampaignIntelligenceView: React.FC<CampaignIntelligenceViewProps> =
               </div>
             </div>
 
-            {/* Historical Campaign Match Section */}
+            {/* Historical match */}
             {currentCampaign.historicalMatch && (
-              <div className="bg-[#1D2638] border border-blue-500/30 rounded-2xl p-6 shadow-xl space-y-4">
-                <div className="flex items-center justify-between pb-3 border-b border-[#253149]">
+              <div
+                className="rounded-lg p-5 space-y-4"
+                style={{ background: "var(--bg-surface)", border: "1px solid var(--border)" }}
+              >
+                <div
+                  className="flex items-center justify-between pb-3"
+                  style={{ borderBottom: "1px solid var(--border-muted)" }}
+                >
                   <div className="flex items-center gap-2">
-                    <History className="w-5 h-5 text-[#4F7CFF]" />
-                    <h3 className="text-sm font-bold text-[#F8FAFC]">
-                      HISTORICAL CAMPAIGN MATCH (TF-IDF + COSINE SIMILARITY)
+                    <History className="w-4 h-4" style={{ color: "var(--accent)" }} />
+                    <h3 className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
+                      Historical campaign match
                     </h3>
                   </div>
-                  <span className="font-mono text-xs font-bold text-[#4F7CFF] bg-blue-500/10 px-2.5 py-1 rounded border border-blue-500/30">
-                    {currentCampaign.historicalMatch.matchPercentage || currentCampaign.historicalMatch.similarity}% MATCH
+                  <span
+                    className="font-mono text-[11px] font-semibold px-2 py-0.5 rounded"
+                    style={{ background: "var(--accent-subtle)", color: "var(--accent)", border: "1px solid var(--accent-border)" }}
+                  >
+                    {currentCampaign.historicalMatch.matchPercentage || currentCampaign.historicalMatch.similarity}% match
                   </span>
                 </div>
-
-                <div className="space-y-3 text-xs">
+                <div className="space-y-3 text-[12px]">
                   <div className="flex items-center justify-between">
-                    <span className="text-[#94A3B8]">Matched Prior Threat Dossier:</span>
-                    <span className="font-mono font-bold text-[#F8FAFC]">
+                    <span style={{ color: "var(--text-muted)" }}>Matched prior dossier:</span>
+                    <span className="font-mono font-semibold" style={{ color: "var(--text-primary)" }}>
                       {currentCampaign.historicalMatch.campaignName}
                     </span>
                   </div>
-
-                  <p className="text-[#94A3B8] bg-[#151B2E] p-3 rounded-xl border border-[#253149] leading-relaxed">
-                    <strong className="text-[#F8FAFC] block mb-1">Pattern Analysis:</strong>
-                    {currentCampaign.historicalMatch.patternSimilarity || currentCampaign.historicalMatch.characteristics?.join(" • ") || "High lexical and timing convergence identified."}
+                  <p
+                    className="p-3 rounded-md leading-relaxed"
+                    style={{ background: "var(--bg-elevated)", border: "1px solid var(--border)", color: "var(--text-secondary)" }}
+                  >
+                    <strong className="block mb-1" style={{ color: "var(--text-primary)" }}>Pattern analysis:</strong>
+                    {currentCampaign.historicalMatch.patternSimilarity ||
+                      currentCampaign.historicalMatch.characteristics?.join(" · ") ||
+                      "High lexical and timing convergence identified."}
                   </p>
                 </div>
               </div>
             )}
           </div>
 
-          {/* Right: Threat Score Breakdown Gauge & Involved Accounts (5 cols) */}
-          <div className="lg:col-span-5 space-y-6">
-            {/* The 5-factor weighted Threat Score gauge */}
+          {/* Right: Gauge + Accounts (5 cols) */}
+          <div className="lg:col-span-5 space-y-5">
             <ThreatScoreGauge
               score={currentCampaign.threatScore}
               threatLevel={currentCampaign.threatLevel}
               breakdown={currentCampaign.threatBreakdown}
-              title="CAMPAIGN THREAT SCORE BREAKDOWN"
+              title="Campaign threat score"
             />
 
-            {/* Involved Accounts List */}
-            <div className="bg-[#1D2638] border border-[#253149] rounded-2xl p-5 shadow-lg space-y-4">
-              <div className="flex items-center justify-between pb-3 border-b border-[#253149]">
+            {/* Involved accounts */}
+            <div
+              className="rounded-lg p-5"
+              style={{ background: "var(--bg-surface)", border: "1px solid var(--border)" }}
+            >
+              <div
+                className="flex items-center justify-between pb-3 mb-3"
+                style={{ borderBottom: "1px solid var(--border-muted)" }}
+              >
                 <div>
-                  <h4 className="text-xs font-semibold uppercase tracking-wider text-[#94A3B8]">
-                    COORDINATED ACCOUNTS ({campaignAccounts.length})
+                  <h4 className="text-[13px] font-semibold" style={{ color: "var(--text-primary)" }}>
+                    Coordinated accounts
+                    <span
+                      className="ml-1.5 text-[11px] font-mono font-normal"
+                      style={{ color: "var(--text-muted)" }}
+                    >
+                      ({campaignAccounts.length})
+                    </span>
                   </h4>
-                  <span className="text-[10px] text-[#94A3B8]">
-                    Click any node to view intelligence dossier
+                  <span className="text-[11px]" style={{ color: "var(--text-muted)" }}>
+                    Click any node to view dossier
                   </span>
                 </div>
                 <button
                   onClick={() => onNavigateToNetwork(currentCampaign.id)}
-                  className="text-xs text-[#4F7CFF] hover:underline flex items-center gap-1 font-semibold"
+                  className="text-[12px] flex items-center gap-1 font-medium transition-colors"
+                  style={{ color: "var(--accent)" }}
                 >
-                  <Network className="w-3.5 h-3.5" />
-                  View Graph
+                  <Network className="w-3.5 h-3.5" /> Graph
                 </button>
               </div>
 
-              <div className="space-y-2 max-h-[360px] overflow-y-auto">
+              <div className="space-y-1.5 max-h-[380px] overflow-y-auto">
                 {campaignAccounts.map((acc) => (
                   <div
                     key={acc.id}
                     onClick={() => onSelectAccount(acc.username)}
-                    className="p-3 rounded-xl bg-[#151B2E] border border-[#253149] hover:border-[#4F7CFF] transition-all cursor-pointer flex items-center justify-between"
+                    className="p-3 rounded-md transition-colors cursor-pointer flex items-center justify-between"
+                    style={{ background: "var(--bg-elevated)", border: "1px solid var(--border)" }}
+                    onMouseEnter={e => (e.currentTarget as HTMLElement).style.borderColor = "var(--accent)"}
+                    onMouseLeave={e => (e.currentTarget as HTMLElement).style.borderColor = "var(--border)"}
                   >
                     <div className="flex items-center gap-2.5">
-                      <div className="w-8 h-8 rounded-full bg-[#111827] border border-red-500/40 flex items-center justify-center font-mono font-bold text-xs text-[#F87171]">
+                      <div
+                        className="w-8 h-8 rounded-full font-mono font-semibold text-[11px] flex items-center justify-center"
+                        style={{ background: "var(--bg-surface)", border: "1px solid var(--border)", color: "var(--accent)" }}
+                      >
                         {acc.username.slice(0, 2).toUpperCase()}
                       </div>
                       <div>
-                        <span className="text-xs font-bold text-[#F8FAFC] block">
+                        <span className="text-[13px] font-medium block" style={{ color: "var(--text-primary)" }}>
                           {acc.displayName}
                         </span>
-                        <span className="text-[10px] font-mono text-[#94A3B8]">
-                          @{acc.username} • Age: {acc.accountAgeDays}d
+                        <span className="text-[10px] font-mono" style={{ color: "var(--text-muted)" }}>
+                          @{acc.username} · Age: {acc.accountAgeDays}d
                         </span>
                       </div>
                     </div>
-
                     <div className="flex items-center gap-2">
-                      <span className="text-[10px] font-mono text-[#F87171] font-bold">
+                      <span className="text-[11px] font-mono font-medium" style={{ color: "var(--sev-critical)" }}>
                         Bot: {acc.botProbability}%
                       </span>
-                      <ChevronRight className="w-4 h-4 text-[#94A3B8]" />
+                      <ChevronRight className="w-4 h-4" style={{ color: "var(--text-muted)" }} />
                     </div>
                   </div>
                 ))}
