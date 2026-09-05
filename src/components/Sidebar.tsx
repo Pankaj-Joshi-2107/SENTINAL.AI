@@ -14,7 +14,8 @@ import {
   SlidersHorizontal,
   Flame,
   Radio,
-  LogOut
+  LogOut,
+  Twitter
 } from "lucide-react";
 
 interface SidebarProps {
@@ -202,7 +203,78 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </nav>
         </div>
 
-        {/* Data Scenario Selector */}
+        {/* Live Connectors */}
+        <div>
+          <div
+            className="text-[10px] font-semibold uppercase tracking-wider px-2 mb-2 flex items-center gap-2"
+            style={{ color: "var(--text-muted)" }}
+          >
+            <span>Live Connectors</span>
+            <span
+              className="w-1.5 h-1.5 rounded-full animate-pulse"
+              style={{
+                background: (activeTab === "x-stream" || activeTab === "reddit-stream")
+                  ? "var(--sev-low)"
+                  : "var(--text-muted)"
+              }}
+            />
+          </div>
+          <nav className="space-y-1">
+            {([
+              { id: "x-stream", label: "X Live Stream", icon: Twitter, live: true, color: "#1D9BF0" },
+              { id: "reddit-stream", label: "Reddit Stream", icon: Radio, live: true, color: "#FF4500" },
+            ] as const).map((item) => {
+              const Icon = item.icon;
+              const isActive = activeTab === item.id;
+              return (
+                <button
+                  key={item.id}
+                  id={`nav-item-${item.id}`}
+                  onClick={() => setActiveTab(item.id as ActiveTab)}
+                  className="w-full flex items-center justify-between px-3 py-2 rounded-lg text-[13px] font-medium transition-all text-left group"
+                  style={{
+                    background: isActive ? "var(--accent-subtle)" : "transparent",
+                    color: isActive ? "var(--accent)" : "var(--text-secondary)",
+                    border: `1px solid ${isActive ? "var(--accent-border)" : "transparent"}`,
+                  }}
+                  onMouseEnter={e => {
+                    if (!isActive) {
+                      (e.currentTarget as HTMLElement).style.color = "var(--text-primary)";
+                      (e.currentTarget as HTMLElement).style.background = "var(--bg-hover)";
+                    }
+                  }}
+                  onMouseLeave={e => {
+                    if (!isActive) {
+                      (e.currentTarget as HTMLElement).style.color = "var(--text-secondary)";
+                      (e.currentTarget as HTMLElement).style.background = "transparent";
+                    }
+                  }}
+                >
+                  <div className="flex items-center gap-3">
+                    <Icon
+                      className="w-4 h-4 shrink-0 transition-transform group-hover:scale-105"
+                      style={{ color: isActive ? "var(--accent)" : item.color }}
+                    />
+                    <span>{item.label}</span>
+                  </div>
+                  {item.live && (
+                    <span
+                      className="text-[9px] font-mono px-1.5 py-0.5 rounded font-semibold"
+                      style={{
+                        background: "var(--sev-low-bg)",
+                        color: "var(--sev-low)",
+                        border: "1px solid var(--sev-low-bd)",
+                      }}
+                    >
+                      LIVE
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </nav>
+        </div>
+
         <div style={{ borderTop: "1px solid var(--border-muted)", paddingTop: "14px" }}>
           <div
             className="text-[10px] font-semibold uppercase tracking-wider px-2 mb-2 flex items-center justify-between"

@@ -1,0 +1,16 @@
+{
+  "platform": "reddit",
+  "post_id": "t3_test_reddit_001",
+  "author_id": "test_reddit_author",
+  "username": "sentinel_reddit_watcher",
+  "display_name": "r/cybersecurity Moderator",
+  "text": "Alert: Suspicious phishing campaign targeting community members with fake verification links. Do not click untrusted URLs.",
+  "timestamp": "2026-09-05T06:00:00.000Z",
+  "urls": ["https://sentinel-phish-alert.example.com"],
+  "hashtags": ["#SecurityAlert", "#PhishingWatch"],
+  "mentions": [],
+  "likes": 42,
+  "retweets": 12,
+  "replies": 7,
+  "follower_count": 5200
+}

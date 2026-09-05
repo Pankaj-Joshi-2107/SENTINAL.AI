@@ -1,0 +1,32 @@
+[
+  {
+    "tag": "sentinel-cyberbullying",
+    "value": "(harassment OR bully OR bullying OR \"delete your account\" OR \"nobody likes you\" OR doxx OR doxing OR \"kill yourself\" OR kys OR loser OR \"zero talent\" OR pathetic OR worthless) lang:en",
+    "description": "Cyberbullying and personal harassment indicators"
+  },
+  {
+    "tag": "sentinel-threats",
+    "value": "(\"watch your back\" OR \"coming for you\" OR \"make you pay\" OR \"hunt you down\" OR \"we know where\" OR threat OR threatening OR intimidate OR \"no escape\") lang:en",
+    "description": "Personal threats and intimidation language"
+  },
+  {
+    "tag": "sentinel-phishing",
+    "value": "(phishing OR \"click here\" OR \"verify your account\" OR \"account suspended\" OR \"claim your\" OR \"free tokens\" OR airdrop OR giveaway) (bit.ly OR tinyurl OR t.co OR shortlink) lang:en",
+    "description": "Phishing links and social engineering lures"
+  },
+  {
+    "tag": "sentinel-scams",
+    "value": "(scam OR fraud OR hoax OR \"pump and dump\" OR rug OR rugpull OR \"100x\" OR \"guaranteed returns\" OR \"limited spots\") lang:en",
+    "description": "Financial scams and fraud schemes"
+  },
+  {
+    "tag": "sentinel-coordinated",
+    "value": "(\"retweet this\" OR \"share now\" OR \"spread the word\" OR \"flood\" OR \"mass report\" OR \"report campaign\" OR bot OR botnet OR astroturf) lang:en",
+    "description": "Coordinated inauthentic behavior signals"
+  },
+  {
+    "tag": "sentinel-disinformation",
+    "value": "(fake news OR hoax OR conspiracy OR \"mainstream media lies\" OR deepfake OR fabricated OR \"they don't want you to know\") lang:en",
+    "description": "Disinformation and narrative manipulation"
+  }
+]

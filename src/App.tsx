@@ -31,6 +31,7 @@ import { NetworkIntelligenceView } from "./views/NetworkIntelligenceView";
 import { CyberSafetyView } from "./views/CyberSafetyView";
 import { ThreatCenterView } from "./views/ThreatCenterView";
 import { SettingsView } from "./views/SettingsView";
+import { XStreamView } from "./views/XStreamView";
 
 export default function App() {
   // Top-level Application Route: "/" -> landing, "/login" -> login, "/dashboard" -> dashboard
@@ -311,6 +312,14 @@ export default function App() {
 
           {activeTab === "settings" && (
             <SettingsView onResetData={handleResetData} />
+          )}
+
+          {activeTab === "x-stream" && (
+            <XStreamView onAnalyzePost={handleAnalyzePost} platform="x" />
+          )}
+
+          {activeTab === "reddit-stream" && (
+            <XStreamView onAnalyzePost={handleAnalyzePost} platform="reddit" />
           )}
         </main>
       </div>

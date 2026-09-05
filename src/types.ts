@@ -1,4 +1,4 @@
-export type Platform = "twitter" | "instagram" | "facebook" | "linkedin" | "threads";
+export type Platform = "twitter" | "x" | "reddit" | "instagram" | "facebook" | "linkedin" | "threads";
 
 export type SentimentType = "positive" | "neutral" | "negative";
 export type EmotionType = "Joy" | "Anger" | "Sadness" | "Fear" | "Disgust" | "Neutral";
@@ -158,4 +158,43 @@ export type ActiveTab =
   | "network"
   | "cyber-safety"
   | "threat-center"
-  | "settings";
+  | "settings"
+  | "x-stream"
+  | "reddit-stream";
+
+/**
+ * Normalized event received from the Python X connector via SSE.
+ * Mirrors the SentinelEvent.to_dict() output from base_connector.py.
+ */
+export interface XStreamEvent {
+  platform: "x" | "reddit";
+  post_id: string;
+  author_id: string;
+  username: string;
+  display_name: string;
+  text: string;
+  timestamp: string;       // ISO-8601 UTC
+  urls: string[];
+  hashtags: string[];
+  mentions: string[];
+  likes: number;
+  retweets: number;
+  replies: number;
+  follower_count: number;
+}
+
+/**
+ * Status payload returned by GET /api/x-stream/status.
+ * Never contains the Bearer Token value.
+ */
+export interface XStreamStatus {
+  tokenConfigured: boolean;
+  connectorStatus: "connected" | "disconnected" | "error";
+  message: string;
+  eventCount: number;
+  lastEventTime: string | null;
+  activeClients: number;
+  activeRuleCount: number;
+  rules: { tag: string; description: string }[];
+  xApiNote: string | null;
+}

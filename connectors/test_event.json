@@ -1,0 +1,16 @@
+{
+  "platform": "x",
+  "post_id": "test-001",
+  "author_id": "test-author-001",
+  "username": "test_user_sentinel",
+  "display_name": "Test User (Sentinel)",
+  "text": "This is a safe test event injected by the Sentinel-AI test harness. No real X API key is needed to verify the pipeline works end-to-end.",
+  "timestamp": "2026-09-05T05:00:00.000Z",
+  "urls": [],
+  "hashtags": ["#SentinelAI", "#TestEvent"],
+  "mentions": [],
+  "likes": 0,
+  "retweets": 0,
+  "replies": 0,
+  "follower_count": 100
+}

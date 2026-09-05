@@ -457,7 +457,7 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
           </div>
 
           {/* Real-Life Style Current Look Logos Strip */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 mb-10">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
             {[
               {
                 name: "X (Twitter)",
@@ -466,8 +466,6 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
                 accentGlow: "rgba(255, 255, 255, 0.08)",
                 borderActive: "rgba(255, 255, 255, 0.25)",
                 icon: <XLogo className="w-5 h-5 text-white" />,
-                metric: "4.8k / min",
-                protocol: "v2 Stream",
               },
               {
                 name: "Telegram",
@@ -476,8 +474,6 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
                 accentGlow: "rgba(36, 161, 222, 0.12)",
                 borderActive: "rgba(36, 161, 222, 0.4)",
                 icon: <TelegramLogo className="w-5 h-5" />,
-                metric: "2.1k / min",
-                protocol: "MTProto API",
               },
               {
                 name: "Instagram",
@@ -486,8 +482,6 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
                 accentGlow: "rgba(225, 48, 108, 0.12)",
                 borderActive: "rgba(225, 48, 108, 0.4)",
                 icon: <InstagramLogo className="w-5 h-5" />,
-                metric: "1.4k / min",
-                protocol: "Graph Webhook",
               },
               {
                 name: "Facebook",
@@ -496,8 +490,6 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
                 accentGlow: "rgba(24, 119, 242, 0.12)",
                 borderActive: "rgba(24, 119, 242, 0.4)",
                 icon: <FacebookLogo className="w-5 h-5" />,
-                metric: "1.9k / min",
-                protocol: "CrowdTangle",
               },
               {
                 name: "Reddit",
@@ -506,8 +498,6 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
                 accentGlow: "rgba(255, 69, 0, 0.12)",
                 borderActive: "rgba(255, 69, 0, 0.4)",
                 icon: <RedditLogo className="w-5 h-5" />,
-                metric: "3.2k / min",
-                protocol: "Pushshift v2",
               },
               {
                 name: "YouTube",
@@ -516,13 +506,11 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
                 accentGlow: "rgba(255, 0, 0, 0.12)",
                 borderActive: "rgba(255, 0, 0, 0.4)",
                 icon: <YouTubeLogo className="w-5 h-5" />,
-                metric: "850 / min",
-                protocol: "Data API v3",
               },
             ].map((p, idx) => (
               <div
                 key={idx}
-                className="group relative p-4 rounded-xl flex flex-col items-center text-center transition-all duration-300 cursor-default"
+                className="group relative p-5 rounded-xl flex flex-col items-center text-center transition-all duration-300 cursor-default"
                 style={{
                   background: "var(--bg-surface)",
                   border: "1px solid var(--border)",
@@ -551,39 +539,11 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
                 <div className="font-semibold text-sm tracking-tight mb-0.5" style={{ color: "var(--text-primary)" }}>
                   {p.name}
                 </div>
-                <div className="text-[11px] font-mono mb-3" style={{ color: "var(--text-muted)" }}>
+                <div className="text-[11px] font-mono" style={{ color: "var(--text-muted)" }}>
                   {p.role}
-                </div>
-
-                {/* Status telemetry chip */}
-                <div
-                  className="mt-auto w-full pt-2.5 border-t border-[var(--border)] flex items-center justify-between text-[10px] font-mono"
-                  style={{ color: "var(--text-muted)" }}
-                >
-                  <span className="flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                    <span>{p.protocol}</span>
-                  </span>
-                  <span className="font-semibold text-[var(--text-secondary)]">{p.metric}</span>
                 </div>
               </div>
             ))}
-          </div>
-
-          {/* Telemetry Status Bar */}
-          <div
-            className="py-3.5 px-6 rounded-xl border border-[var(--border)] flex flex-wrap items-center justify-between gap-4 text-xs font-mono"
-            style={{ background: "var(--bg-elevated)" }}
-          >
-            <div className="flex items-center gap-2.5" style={{ color: "var(--text-secondary)" }}>
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="font-semibold text-[var(--text-primary)]">6 Active Sensor Connectors</span>
-              <span className="hidden sm:inline text-[var(--text-muted)]">· Zero rate-limit degradation</span>
-            </div>
-            <div className="flex items-center gap-6" style={{ color: "var(--text-muted)" }}>
-              <span>Ingestion Latency: <strong className="text-[var(--accent)]">340ms</strong></span>
-              <span>Total Stream Velocity: <strong className="text-[var(--text-primary)]">14,250 events/min</strong></span>
-            </div>
           </div>
         </div>
       </section>

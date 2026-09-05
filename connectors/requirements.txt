@@ -1,0 +1,11 @@
+# Sentinel-AI — Python Connector Dependencies
+#
+# Minimal dependency set: only the Python standard library + requests + praw.
+# No heavy ML frameworks are needed here — NLP scoring is handled
+# by the Node.js backend (Gemini or deterministic fallback).
+#
+# Install with:
+#   pip install -r connectors/requirements.txt
+
+requests>=2.32.0
+praw>=7.7.0
