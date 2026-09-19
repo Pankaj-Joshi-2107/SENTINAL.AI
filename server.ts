@@ -524,6 +524,8 @@ app.get("/api/x-stream/status", (_req, res) => {
   });
 });
 
+export { app };
+
 async function startServer() {
   if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({
@@ -544,4 +546,6 @@ async function startServer() {
   });
 }
 
-startServer();
+if (process.env.VERCEL !== "1") {
+  startServer();
+}
