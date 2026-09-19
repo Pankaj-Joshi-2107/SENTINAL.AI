@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: sentinel-ai
+    runtime: node
+    plan: free
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: GEMINI_API_KEY
+        sync: false
