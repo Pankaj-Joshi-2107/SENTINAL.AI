@@ -187,7 +187,7 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
 
         {/* Social platform coverage strip */}
         <div className="mt-8 flex flex-wrap items-center justify-center gap-3 text-xs font-mono text-[var(--text-muted)]">
-          <span className="text-[11px] tracking-wide uppercase">Actively ingesting live telemetry:</span>
+          <span className="text-[11px] tracking-wide uppercase">Upcoming ingesting live telemetry:</span>
           <div className="flex items-center gap-2">
             <span className="w-8 h-8 rounded-lg flex items-center justify-center transition-transform hover:scale-110 shadow-sm" style={{ background: "rgba(0, 0, 0, 0.4)", border: "1px solid rgba(255, 255, 255, 0.12)" }} title="X (Twitter)">
               <XLogo className="w-4 h-4 text-white" />
