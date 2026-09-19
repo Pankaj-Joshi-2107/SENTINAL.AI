@@ -719,10 +719,6 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
         </div>
       </section>
 
-      {/* 9. Minimal Footer */}
-      <footer className="py-8 px-6 lg:px-12 border-t border-[var(--border)] text-center text-xs font-mono" style={{ color: "var(--text-muted)" }}>
-        Team Syntrix · Smart India Hackathon 2026 · Social Media Analytics · Theme: Smart Automation
-      </footer>
     </div>
   );
 };
