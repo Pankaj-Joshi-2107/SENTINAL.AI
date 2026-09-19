@@ -185,7 +185,7 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
           </a>
         </div>
 
-        {/* Live Social Ingestion Strip with Real-Life Logos */}
+        {/* Social platform coverage strip */}
         <div className="mt-8 flex flex-wrap items-center justify-center gap-3 text-xs font-mono text-[var(--text-muted)]">
           <span className="text-[11px] tracking-wide uppercase">Actively ingesting live telemetry:</span>
           <div className="flex items-center gap-2">
@@ -218,11 +218,11 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
               <span className="w-2.5 h-2.5 rounded-full bg-rose-500/80" />
               <span className="w-2.5 h-2.5 rounded-full bg-amber-500/80" />
               <span className="w-2.5 h-2.5 rounded-full bg-emerald-500/80" />
-              <span className="text-[11px] font-mono text-[var(--text-muted)] ml-2">sentinel.ai/dashboard · Live Intelligence Workstation</span>
+              <span className="text-[11px] font-mono text-[var(--text-muted)] ml-2">sentinel.ai/dashboard · Demo Intelligence Workstation</span>
             </div>
             <div className="flex items-center gap-2 text-[10px] font-mono text-[var(--accent)] bg-[var(--accent-subtle)] px-2 py-0.5 rounded border border-[var(--accent-border)]">
               <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] animate-pulse" />
-              LIVE WORKSTATION
+              DEMO WORKSTATION
             </div>
           </div>
 
@@ -245,7 +245,7 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
                 className="px-5 py-2.5 rounded-xl font-semibold text-xs flex items-center gap-2 shadow-xl"
                 style={{ background: "var(--accent)", color: "var(--accent-text-on)" }}
               >
-                <span>Enter Live Dashboard</span>
+                <span>Enter Demo Dashboard</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </span>
             </div>
@@ -452,7 +452,7 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
               Unified across 6+ social platforms.
             </h2>
             <p className="text-sm mt-3" style={{ color: "var(--text-secondary)" }}>
-              Continuous real-time ingestion, NLP sentiment parsing, and behavioral graph mapping across mainstream social ecosystems.
+              Designed for connector-based ingestion, NLP sentiment parsing, and behavioral graph mapping across mainstream social ecosystems.
             </p>
           </div>
 
@@ -462,7 +462,7 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
               {
                 name: "X (Twitter)",
                 handle: "@twitter",
-                role: "Live Firehose",
+                role: "Connector-ready",
                 accentGlow: "rgba(255, 255, 255, 0.08)",
                 borderActive: "rgba(255, 255, 255, 0.25)",
                 icon: <XLogo className="w-5 h-5 text-white" />,

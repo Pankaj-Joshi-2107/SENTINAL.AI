@@ -27,7 +27,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onResetData }) => {
           }}
         >
           <CheckCircle2 className="w-3.5 h-3.5" />
-          Compliant & secure
+          Demo safeguards enabled
         </span>
       </div>
 
@@ -133,7 +133,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onResetData }) => {
             </h3>
           </div>
           <p className="text-[12px] leading-relaxed" style={{ color: "var(--text-secondary)" }}>
-            Engineered for bulletproof execution with zero failure modes:
+            Uses a primary hosted model with a deterministic offline fallback when configured:
           </p>
           <ul className="space-y-2 text-[12px]">
             {[

@@ -32,20 +32,20 @@ interface XStreamViewProps {
 /** Branding config per platform */
 const PLATFORM_CONFIG = {
   x: {
-    name: "X Live Stream",
+    name: "X Connector",
     icon: Twitter,
     color: "#1D9BF0",
-    description: "Real-time X (Twitter) filtered stream — cyberbullying, harassment, phishing, and threat detection.",
+    description: "X (Twitter) filtered connector for cyberbullying, harassment, phishing, and threat detection.",
     tokenEnvVar: "X_BEARER_TOKEN",
     setupCmd: "python connectors/start_x_connector.py",
     setupUrl: "developer.twitter.com",
     costNote: "Requires X API Basic plan (~$100/mo) or higher.",
   },
   reddit: {
-    name: "Reddit Stream",
+    name: "Reddit Connector",
     icon: Radio,
     color: "#FF4500",
-    description: "Real-time Reddit stream — monitoring public subreddits for harassment, threats, scams, and coordinated activity.",
+    description: "Reddit connector monitoring public subreddits for harassment, threats, scams, and coordinated activity.",
     tokenEnvVar: "REDDIT_CLIENT_ID + REDDIT_CLIENT_SECRET",
     setupCmd: "python connectors/start_reddit_connector.py",
     setupUrl: "reddit.com/prefs/apps",
@@ -101,6 +101,7 @@ export const XStreamView: React.FC<XStreamViewProps> = ({ onAnalyzePost, platfor
   const [autoScroll, setAutoScroll] = useState(true);
   const [filterMinRisk, setFilterMinRisk] = useState<number>(0);
   const [totalReceived, setTotalReceived] = useState(0);
+  const [connectorError, setConnectorError] = useState<string | null>(null);
 
   // ── Fetch connector status ───────────────────────────────────────────────
   const refreshStatus = useCallback(async () => {
@@ -109,9 +110,12 @@ export const XStreamView: React.FC<XStreamViewProps> = ({ onAnalyzePost, platfor
       if (resp.ok) {
         const data: XStreamStatus = await resp.json();
         setStatus(data);
+        setConnectorError(null);
+      } else {
+        setConnectorError(`Unable to read ${cfg.name} status (HTTP ${resp.status}).`);
       }
     } catch {
-      // Server unreachable — keep existing status
+      setConnectorError(`${cfg.name} is unavailable. Start the connector service or check the local server.`);
     }
   }, []);
 
@@ -134,7 +138,7 @@ export const XStreamView: React.FC<XStreamViewProps> = ({ onAnalyzePost, platfor
           setTotalReceived(posts.length);
         }
       })
-      .catch(() => {});
+      .catch(() => setConnectorError(`${cfg.name} feed is unavailable. No events were loaded.`));
   }, [platform]);
 
   // ── Inject simulation event ──────────────────────────────────────────────
@@ -147,7 +151,7 @@ export const XStreamView: React.FC<XStreamViewProps> = ({ onAnalyzePost, platfor
         body: JSON.stringify({ platform }),
       });
     } catch {
-      // Server unreachable
+      setConnectorError(`Could not inject a test event into ${cfg.name}.`);
     } finally {
       setSimulating(false);
     }
@@ -239,6 +243,8 @@ export const XStreamView: React.FC<XStreamViewProps> = ({ onAnalyzePost, platfor
   const statusColor =
     status.connectorStatus === "connected"
       ? "var(--sev-low)"
+      : status.connectorStatus === "simulation"
+      ? "var(--accent)"
       : status.connectorStatus === "error"
       ? "var(--sev-critical)"
       : "var(--text-muted)";
@@ -246,6 +252,8 @@ export const XStreamView: React.FC<XStreamViewProps> = ({ onAnalyzePost, platfor
   const statusBg =
     status.connectorStatus === "connected"
       ? "var(--sev-low-bg)"
+      : status.connectorStatus === "simulation"
+      ? "var(--accent-subtle)"
       : status.connectorStatus === "error"
       ? "var(--sev-critical-bg)"
       : "var(--bg-elevated)";
@@ -253,6 +261,8 @@ export const XStreamView: React.FC<XStreamViewProps> = ({ onAnalyzePost, platfor
   const statusBorder =
     status.connectorStatus === "connected"
       ? "var(--sev-low-bd)"
+      : status.connectorStatus === "simulation"
+      ? "var(--accent-border)"
       : status.connectorStatus === "error"
       ? "var(--sev-critical-bd)"
       : "var(--border)";
@@ -317,7 +327,7 @@ export const XStreamView: React.FC<XStreamViewProps> = ({ onAnalyzePost, platfor
             }}
           >
             {sseConnected ? (
-              <><Wifi className="w-3 h-3" /><span>SSE Live</span></>
+              <><Wifi className="w-3 h-3" /><span>SSE Connected</span></>
             ) : (
               <><WifiOff className="w-3 h-3" /><span>SSE Offline</span></>
             )}
@@ -368,6 +378,17 @@ export const XStreamView: React.FC<XStreamViewProps> = ({ onAnalyzePost, platfor
                 {m.label}
               </span>
             </div>
+
+            {connectorError && (
+              <div
+                role="alert"
+                className="rounded-lg p-3 flex items-start gap-2 text-[11px]"
+                style={{ background: "var(--sev-critical-bg)", border: "1px solid var(--sev-critical-bd)", color: "var(--sev-critical)" }}
+              >
+                <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+                <span>{connectorError}</span>
+              </div>
+            )}
             <div className="text-[15px] font-semibold font-mono" style={{ color: m.color }}>
               {m.value}
             </div>
@@ -386,6 +407,8 @@ export const XStreamView: React.FC<XStreamViewProps> = ({ onAnalyzePost, platfor
         <div className="mt-0.5 shrink-0">
           {status.connectorStatus === "connected" ? (
             <span className="w-2 h-2 rounded-full block animate-pulse" style={{ background: statusColor }} />
+          ) : status.connectorStatus === "simulation" ? (
+            <Zap className="w-4 h-4" style={{ color: statusColor }} />
           ) : status.connectorStatus === "error" ? (
             <AlertTriangle className="w-4 h-4" style={{ color: statusColor }} />
           ) : (
@@ -395,7 +418,9 @@ export const XStreamView: React.FC<XStreamViewProps> = ({ onAnalyzePost, platfor
         <div className="flex-1 min-w-0">
           <div className="text-[12px] font-medium mb-1" style={{ color: "var(--text-primary)" }}>
             {status.connectorStatus === "connected"
-              ? `${cfg.name} Active`
+              ? status.tokenConfigured ? `${cfg.name} Active` : "Synthetic connector mode"
+              : status.connectorStatus === "simulation"
+              ? "Synthetic connector mode"
               : status.connectorStatus === "error"
               ? "Connector Error"
               : "Connector Offline"}
@@ -503,7 +528,7 @@ export const XStreamView: React.FC<XStreamViewProps> = ({ onAnalyzePost, platfor
         </div>
       )}
 
-      {/* Live Feed */}
+      {/* Event Feed */}
       <div
         className="rounded-lg"
         style={{ background: "var(--bg-surface)", border: "1px solid var(--border)" }}
@@ -516,7 +541,7 @@ export const XStreamView: React.FC<XStreamViewProps> = ({ onAnalyzePost, platfor
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full animate-pulse" style={{ background: sseConnected ? "var(--sev-low)" : "var(--text-muted)" }} />
             <span className="text-[12px] font-semibold" style={{ color: "var(--text-primary)" }}>
-              Live Feed
+              Event Feed
             </span>
             <span className="text-[11px] font-mono" style={{ color: "var(--text-muted)" }}>
               {filteredEvents.length} posts

@@ -37,6 +37,14 @@ export const ThreatSimulationModal: React.FC<ThreatSimulationModalProps> = ({
     }
   }, [isOpen]);
 
+  useEffect(() => {
+    if (isRunning && currentStep >= 7) {
+      setIsRunning(false);
+      setIsFinished(true);
+      onCompleteSimulation();
+    }
+  }, [currentStep, isRunning, onCompleteSimulation]);
+
   const startSimulation = () => {
     if (isRunning) return;
     setIsRunning(true);
@@ -48,9 +56,6 @@ export const ThreatSimulationModal: React.FC<ThreatSimulationModalProps> = ({
       setCurrentStep((prev) => {
         if (prev >= 7) {
           clearInterval(interval);
-          setIsRunning(false);
-          setIsFinished(true);
-          onCompleteSimulation();
           return 7;
         }
         return prev + 1;

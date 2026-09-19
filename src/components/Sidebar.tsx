@@ -203,13 +203,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </nav>
         </div>
 
-        {/* Live Connectors */}
+        {/* Connector status */}
         <div>
           <div
             className="text-[10px] font-semibold uppercase tracking-wider px-2 mb-2 flex items-center gap-2"
             style={{ color: "var(--text-muted)" }}
           >
-            <span>Live Connectors</span>
+            <span>Connectors</span>
             <span
               className="w-1.5 h-1.5 rounded-full animate-pulse"
               style={{
@@ -221,8 +221,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </div>
           <nav className="space-y-1">
             {([
-              { id: "x-stream", label: "X Live Stream", icon: Twitter, live: true, color: "#1D9BF0" },
-              { id: "reddit-stream", label: "Reddit Stream", icon: Radio, live: true, color: "#FF4500" },
+              { id: "x-stream", label: "X Connector", icon: Twitter, live: true, color: "#1D9BF0" },
+              { id: "reddit-stream", label: "Reddit Connector", icon: Radio, live: true, color: "#FF4500" },
             ] as const).map((item) => {
               const Icon = item.icon;
               const isActive = activeTab === item.id;
@@ -266,7 +266,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                         border: "1px solid var(--sev-low-bd)",
                       }}
                     >
-                      LIVE
+                      DEMO
                     </span>
                   )}
                 </button>
@@ -397,7 +397,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </button>
         )}
 
-        {/* Live Status Bar */}
+        {/* Demo status bar */}
         <div
           className="px-2 pt-2 flex items-center gap-2 text-[11px] font-mono"
           style={{ color: "var(--text-muted)", borderTop: "1px solid var(--border-muted)" }}
@@ -406,7 +406,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             className="w-2 h-2 rounded-full shrink-0"
             style={{ background: "var(--sev-low)" }}
           />
-          <span className="truncate">Stream Active</span>
+          <span className="truncate">Demo stream</span>
           <span className="ml-auto font-semibold text-[10px]" style={{ color: "var(--text-muted)" }}>v2.4.0</span>
         </div>
       </div>

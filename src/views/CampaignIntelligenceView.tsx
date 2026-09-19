@@ -321,7 +321,7 @@ export const CampaignIntelligenceView: React.FC<CampaignIntelligenceViewProps> =
               <div className="space-y-1.5 max-h-[380px] overflow-y-auto">
                 {campaignAccounts.map((acc) => (
                   <div
-                    key={acc.id}
+                    key={acc.id || acc.username}
                     onClick={() => onSelectAccount(acc.username)}
                     className="p-3 rounded-md transition-colors cursor-pointer flex items-center justify-between"
                     style={{ background: "var(--bg-elevated)", border: "1px solid var(--border)" }}

@@ -30,7 +30,7 @@ export const TopBar: React.FC<TopBarProps> = ({
           <span style={{ color: "var(--text-muted)" }}>/</span>
           <span className="font-medium flex items-center gap-1.5" style={{ color: "var(--text-secondary)" }}>
             <Activity className="w-3.5 h-3.5" style={{ color: "var(--accent)" }} />
-            Live Stream
+            Demo Stream
           </span>
         </div>
       </div>
@@ -67,7 +67,7 @@ export const TopBar: React.FC<TopBarProps> = ({
         </div>
       </div>
 
-      {/* Right: Live Telemetry & Threats Indicator */}
+      {/* Right: Telemetry & Threats Indicator */}
       <div className="flex items-center gap-3">
         {simulationRunning ? (
           <span
@@ -106,7 +106,7 @@ export const TopBar: React.FC<TopBarProps> = ({
             className="w-2 h-2 rounded-full shrink-0"
             style={{ background: "var(--sev-low)" }}
           />
-          <span className="font-medium" style={{ color: "var(--text-secondary)" }}>Operational</span>
+          <span className="font-medium" style={{ color: "var(--text-secondary)" }}>Demo mode</span>
         </div>
       </div>
     </header>

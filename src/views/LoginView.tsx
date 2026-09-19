@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ShieldAlert, ArrowRight, ArrowLeft, Lock, Mail, Key } from "lucide-react";
+import { ArrowRight, ArrowLeft, Mail } from "lucide-react";
 
 interface LoginViewProps {
   onLoginSuccess: () => void;
@@ -10,9 +10,6 @@ export const LoginView: React.FC<LoginViewProps> = ({
   onLoginSuccess,
   onBackToLanding,
 }) => {
-  const [email, setEmail] = useState("analyst@syntrix.ai");
-  const [password, setPassword] = useState("••••••••••••");
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onLoginSuccess();
@@ -81,68 +78,21 @@ export const LoginView: React.FC<LoginViewProps> = ({
             </span>
           </div>
           <h2 className="text-xl font-bold mt-4" style={{ color: "var(--text-primary)" }}>
-            Access the Intelligence Center
+            Enter the Demo Intelligence Center
           </h2>
           <p className="text-xs mt-1" style={{ color: "var(--text-muted)" }}>
-            Sign in to access real-time social threat telemetry
+            Explore the synthetic threat-intelligence workspace
           </p>
         </div>
 
-        {/* Mock Login Form */}
+        {/* Explicit demo access flow */}
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-xs font-medium mb-1.5" style={{ color: "var(--text-secondary)" }}>
-              Email address
-            </label>
-            <div className="relative">
-              <Mail className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--text-muted)]" />
-              <input
-                type="email"
-                id="login-input-email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="analyst@syntrix.ai"
-                className="w-full pl-10 pr-3.5 py-2.5 rounded-xl text-xs font-mono outline-none transition-all"
-                style={{
-                  background: "var(--bg-base)",
-                  border: "1px solid var(--border)",
-                  color: "var(--text-primary)",
-                }}
-                onFocus={(e) => (e.target.style.borderColor = "var(--border-active)")}
-                onBlur={(e) => (e.target.style.borderColor = "var(--border)")}
-              />
-            </div>
+          <div className="rounded-xl p-4 text-center" style={{ background: "var(--bg-base)", border: "1px solid var(--border)" }}>
+            <Mail className="mx-auto mb-2 h-5 w-5" style={{ color: "var(--accent)" }} />
+            <p className="text-xs leading-relaxed" style={{ color: "var(--text-secondary)" }}>
+              No account or credentials are required for this local prototype.
+            </p>
           </div>
-
-          <div>
-            <div className="flex items-center justify-between mb-1.5">
-              <label className="text-xs font-medium" style={{ color: "var(--text-secondary)" }}>
-                Security passkey
-              </label>
-              <span className="text-[10px] font-mono" style={{ color: "var(--accent)" }}>
-                Pre-filled for demo
-              </span>
-            </div>
-            <div className="relative">
-              <Key className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--text-muted)]" />
-              <input
-                type="password"
-                id="login-input-password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full pl-10 pr-3.5 py-2.5 rounded-xl text-xs font-mono outline-none transition-all"
-                style={{
-                  background: "var(--bg-base)",
-                  border: "1px solid var(--border)",
-                  color: "var(--text-primary)",
-                }}
-                onFocus={(e) => (e.target.style.borderColor = "var(--border-active)")}
-                onBlur={(e) => (e.target.style.borderColor = "var(--border)")}
-              />
-            </div>
-          </div>
-
-          {/* Primary Sign In Button */}
           <button
             type="submit"
             id="login-btn-submit"
@@ -155,7 +105,7 @@ export const LoginView: React.FC<LoginViewProps> = ({
             onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.filter = "brightness(1.08)")}
             onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.filter = "brightness(1.0)")}
           >
-            <span>Sign In to Workstation</span>
+            <span>Enter Demo Workspace</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </button>
         </form>
@@ -169,8 +119,8 @@ export const LoginView: React.FC<LoginViewProps> = ({
             color: "var(--accent)",
           }}
         >
-          <span className="font-semibold block mb-0.5">Demo Environment</span>
-          Any credentials will grant access for hackathon evaluation.
+          <span className="font-semibold block mb-0.5">Synthetic Demo Environment</span>
+          Data is simulated for evaluation and does not represent live users.
         </div>
 
         {/* Skip action */}
@@ -181,7 +131,7 @@ export const LoginView: React.FC<LoginViewProps> = ({
             className="text-xs font-medium transition-colors hover:underline"
             style={{ color: "var(--text-secondary)" }}
           >
-            Continue as guest →
+            Return to overview →
           </button>
         </div>
       </div>

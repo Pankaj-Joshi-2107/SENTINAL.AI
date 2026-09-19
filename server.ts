@@ -68,7 +68,7 @@ ${text.slice(0, 1000)}
 Provide an honest, objective intelligence evaluation.`;
 
     const response = await ai.models.generateContent({
-      model: "gemini-3.8-flash",
+      model: "gemini-3.6-flash",
       contents: prompt,
       config: {
         systemInstruction:
@@ -127,7 +127,7 @@ Provide an honest, objective intelligence evaluation.`;
       success: true,
       fallback: false,
       analysis: parsed,
-      source: "Gemini 3.8 Flash",
+      source: "Gemini 3.6 Flash",
     });
   } catch (error: any) {
     console.warn("Gemini API call failed, flagging for client deterministic fallback:", error?.message);
@@ -198,7 +198,8 @@ app.post("/api/x-events", (req, res) => {
 
   xEventCount++;
   xLastEventTime = new Date().toISOString();
-  xConnectorStatus = "connected";
+  xConnectorStatus = "simulation";
+  xConnectorMessage = "Synthetic test event generated locally. Configure the connector for external events.";
 
   // Store in ring buffer (keep last 50)
   recentEventsBuffer.unshift(safe);
@@ -400,7 +401,8 @@ app.post("/api/x-events/simulate", (req, res) => {
 
   xEventCount++;
   xLastEventTime = new Date().toISOString();
-  xConnectorStatus = "connected";
+  xConnectorStatus = "simulation";
+  xConnectorMessage = "Synthetic test event generated locally. Configure the connector for external events.";
 
   recentEventsBuffer.unshift(postPayload);
   if (recentEventsBuffer.length > 50) recentEventsBuffer.pop();
@@ -442,7 +444,9 @@ app.post("/api/x-events/clear", (req, res) => {
  */
 app.post("/api/x-stream/connector-status", (req, res) => {
   const { status, message, activeRuleCount, rules } = req.body;
-  if (status) xConnectorStatus = String(status).slice(0, 50);
+  if (status && ["connected", "disconnected", "error"].includes(String(status))) {
+    xConnectorStatus = String(status);
+  }
   if (message) xConnectorMessage = String(message).slice(0, 200);
   if (typeof activeRuleCount === "number") xActiveRuleCount = activeRuleCount;
   if (Array.isArray(rules)) xRuleSummaries = rules.slice(0, 20);
@@ -503,9 +507,12 @@ app.get("/api/x-stream/status", (_req, res) => {
     // Token presence only — never the value
     tokenConfigured: hasToken,
     connectorStatus: xConnectorStatus,
-    message: hasToken
-      ? xConnectorMessage
-      : "X_BEARER_TOKEN is not configured. Set it in your .env file.",
+    message:
+      xConnectorStatus === "error" || xConnectorStatus === "simulation"
+        ? xConnectorMessage
+        : hasToken
+        ? xConnectorMessage
+        : "X_BEARER_TOKEN is not configured. Set it in your .env file.",
     eventCount: xEventCount,
     lastEventTime: xLastEventTime,
     activeClients: xSseClients.size,

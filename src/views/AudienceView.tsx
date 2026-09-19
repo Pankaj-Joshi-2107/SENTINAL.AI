@@ -220,7 +220,7 @@ export const AudienceView: React.FC<AudienceViewProps> = ({
             const isBurst = acc.burstActivity;
             return (
               <div
-                key={acc.id}
+                key={acc.id || acc.username}
                 onClick={() => onSelectAccount(acc.username)}
                 className="p-4 rounded-md transition-colors cursor-pointer"
                 style={{

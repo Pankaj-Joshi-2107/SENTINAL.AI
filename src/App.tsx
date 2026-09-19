@@ -17,6 +17,7 @@ import { TopBar } from "./components/TopBar";
 import { AccountIntelligenceDrawer } from "./components/AccountIntelligenceDrawer";
 import { ThreatSimulationModal } from "./components/ThreatSimulationModal";
 import { CsvImportModal } from "./components/CsvImportModal";
+import { Toast } from "./components/Toast";
 
 // Views
 import { LandingPageView } from "./views/LandingPageView";
@@ -81,6 +82,7 @@ export default function App() {
   const [isCsvModalOpen, setIsCsvModalOpen] = useState<boolean>(false);
   const [threatDetected, setThreatDetected] = useState<boolean>(false);
   const [simulationRunning, setSimulationRunning] = useState<boolean>(false);
+  const [toast, setToast] = useState<string | null>(null);
 
   // Filter posts by active scenario
   const currentPosts = useMemo(() => {
@@ -176,6 +178,7 @@ export default function App() {
     setThreatDetected(false);
     setSelectedCampaignId("CAMP-2026-042");
     setSelectedAccountUsername(null);
+    setToast("Demo data restored.");
   };
 
   // Route 1: Landing Page (Public root)
@@ -188,7 +191,7 @@ export default function App() {
     );
   }
 
-  // Route 2: Mock Login Page (Authentication placeholder)
+  // Route 2: Demo workspace access
   if (currentRoute === "login") {
     return (
       <LoginView
@@ -224,6 +227,13 @@ export default function App() {
 
         {/* Dynamic Page Views */}
         <main className="flex-1 px-6 py-6 lg:px-8 max-w-[1440px] w-full mx-auto pb-12">
+          <div
+            role="status"
+            className="mb-5 rounded-lg px-4 py-3 text-xs leading-relaxed"
+            style={{ background: "var(--accent-subtle)", border: "1px solid var(--accent-border)", color: "var(--accent)" }}
+          >
+            <strong>DEMO MODE:</strong> Dashboard metrics and events use synthetic benchmark data. Connector feeds remain offline until their APIs are configured.
+          </div>
           {activeTab === "overview" && (
             <OverviewView
               posts={currentPosts}
@@ -330,6 +340,7 @@ export default function App() {
         posts={allPosts}
         isOpen={!!selectedAccountUsername}
         onClose={() => setSelectedAccountUsername(null)}
+        onNotify={setToast}
         onSelectCampaign={(cid) => {
           setSelectedCampaignId(cid);
           setActiveTab("campaigns");
@@ -354,6 +365,7 @@ export default function App() {
         onImportSuccess={handleImportSuccess}
         onResetToDemo={handleResetData}
       />
+      {toast && <Toast message={toast} onClose={() => setToast(null)} />}
     </div>
   );
 }

@@ -189,7 +189,7 @@ export interface XStreamEvent {
  */
 export interface XStreamStatus {
   tokenConfigured: boolean;
-  connectorStatus: "connected" | "disconnected" | "error";
+  connectorStatus: "connected" | "simulation" | "disconnected" | "error";
   message: string;
   eventCount: number;
   lastEventTime: string | null;

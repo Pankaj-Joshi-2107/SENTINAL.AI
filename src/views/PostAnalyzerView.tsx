@@ -36,6 +36,7 @@ export const PostAnalyzerView: React.FC<PostAnalyzerViewProps> = ({ initialPost 
     initialPost ? initialPost.text : SAMPLE_POSTS[0].text
   );
   const [isAnalyzing, setIsAnalyzing] = useState<boolean>(false);
+  const [analysisNotice, setAnalysisNotice] = useState<string | null>(null);
   const [analysis, setAnalysis] = useState<AnalysisResult | null>(() =>
     analyzePostFallback(initialPost ? initialPost.text : SAMPLE_POSTS[0].text)
   );
@@ -43,6 +44,7 @@ export const PostAnalyzerView: React.FC<PostAnalyzerViewProps> = ({ initialPost 
   const handleAnalyze = async () => {
     if (!inputText.trim()) return;
     setIsAnalyzing(true);
+    setAnalysisNotice(null);
     try {
       const response = await fetch("/api/analyze-post", {
         method: "POST",
@@ -68,11 +70,18 @@ export const PostAnalyzerView: React.FC<PostAnalyzerViewProps> = ({ initialPost 
           isFallback: false,
           source: "Powered by Gemini"
         });
+        setAnalysisNotice("Analysis completed with Gemini AI.");
       } else {
         setAnalysis(analyzePostFallback(inputText));
+        setAnalysisNotice(
+          data.reason
+            ? `Gemini AI is unavailable. Offline fallback analysis was used: ${data.reason}.`
+            : "Gemini AI is unavailable. Offline fallback analysis was used."
+        );
       }
-    } catch (err) {
+    } catch {
       setAnalysis(analyzePostFallback(inputText));
+      setAnalysisNotice("The analysis service could not be reached. Offline fallback analysis was used.");
     } finally {
       setIsAnalyzing(false);
     }
@@ -167,6 +176,20 @@ export const PostAnalyzerView: React.FC<PostAnalyzerViewProps> = ({ initialPost 
                 ))}
               </div>
             </div>
+
+            {analysisNotice && (
+              <div
+                role="status"
+                className="rounded-lg px-4 py-3 text-xs leading-relaxed"
+                style={{
+                  background: analysis?.isFallback ? "var(--sev-medium-bg)" : "var(--sev-low-bg)",
+                  border: `1px solid ${analysis?.isFallback ? "var(--sev-medium-bd)" : "var(--sev-low-bd)"}`,
+                  color: analysis?.isFallback ? "var(--sev-medium)" : "var(--sev-low)",
+                }}
+              >
+                {analysisNotice}
+              </div>
+            )}
 
             <textarea
               id="textarea-post-analyzer"

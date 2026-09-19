@@ -98,7 +98,7 @@ export const OverviewView: React.FC<OverviewViewProps> = ({
           className="text-[11px] font-mono mb-1"
           style={{ color: "var(--text-muted)" }}
         >
-          Overview · Live intelligence
+          Overview · Demo intelligence
         </div>
         <h1
           className="text-xl font-semibold"
@@ -475,7 +475,7 @@ export const OverviewView: React.FC<OverviewViewProps> = ({
               className="text-[11px]"
               style={{ color: "var(--text-muted)" }}
             >
-              Live inspection of simulated feed posts
+              Inspection of simulated feed posts
             </span>
           </div>
           <button

@@ -9,6 +9,7 @@ interface AccountIntelligenceDrawerProps {
   isOpen: boolean;
   onClose: () => void;
   onSelectCampaign?: (campaignId: string) => void;
+  onNotify?: (message: string) => void;
 }
 
 export const AccountIntelligenceDrawer: React.FC<AccountIntelligenceDrawerProps> = ({
@@ -16,7 +17,8 @@ export const AccountIntelligenceDrawer: React.FC<AccountIntelligenceDrawerProps>
   posts,
   isOpen,
   onClose,
-  onSelectCampaign
+  onSelectCampaign,
+  onNotify,
 }) => {
   if (!isOpen || !account) return null;
 
@@ -192,7 +194,7 @@ export const AccountIntelligenceDrawer: React.FC<AccountIntelligenceDrawerProps>
           <span className="text-[11px]" style={{ color: 'var(--text-muted)' }}>Moderation action:</span>
           <div className="flex gap-2">
             <button
-              onClick={() => alert(`Marked @${account.username} for active human review queue.`)}
+              onClick={() => onNotify?.(`@${account.username} marked for human review.`)}
               className="px-3 py-1.5 text-[12px] font-semibold rounded-md transition-colors"
               style={{ background: 'var(--bg-surface)', color: 'var(--sev-medium)', border: '1px solid var(--sev-medium-bd)' }}
               onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = 'var(--sev-medium-bg)'}
@@ -201,7 +203,7 @@ export const AccountIntelligenceDrawer: React.FC<AccountIntelligenceDrawerProps>
               Flag for review
             </button>
             <button
-              onClick={() => alert(`Escalated @${account.username} to Trust & Safety leads.`)}
+              onClick={() => onNotify?.(`@${account.username} escalated to Trust & Safety.`)}
               className="px-3 py-1.5 text-[12px] font-semibold rounded-md transition-colors"
               style={{ background: 'var(--sev-critical)', color: '#fff' }}
               onMouseEnter={e => (e.currentTarget as HTMLElement).style.opacity = '0.9'}
