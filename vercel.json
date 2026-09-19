@@ -2,11 +2,6 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "framework": "vite",
-  "functions": {
-    "api/[...path].ts": {
-      "includeFiles": "dist/**"
-    }
-  },
   "rewrites": [
     {
       "source": "/api/:path*",
