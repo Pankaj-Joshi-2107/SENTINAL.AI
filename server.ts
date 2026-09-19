@@ -1,5 +1,6 @@
 import "dotenv/config";
 import express from "express";
+import http from "http";
 import path from "path";
 import { createServer as createViteServer } from "vite";
 import { GoogleGenAI, Type } from "@google/genai";
@@ -527,9 +528,18 @@ app.get("/api/x-stream/status", (_req, res) => {
 export { app };
 
 async function startServer() {
+  // Create an explicit HTTP server so Vite's HMR WebSocket can attach to the
+  // same port. In middlewareMode, Vite otherwise starts its own WS server on a
+  // separate port that the preview proxy does not forward, causing
+  // "WebSocket closed without opened" errors in the browser.
+  const server = http.createServer(app);
+
   if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({
-      server: { middlewareMode: true },
+      server: {
+        middlewareMode: true,
+        hmr: { server },
+      },
       appType: "spa",
     });
     app.use(vite.middlewares);
@@ -541,7 +551,7 @@ async function startServer() {
     });
   }
 
-  app.listen(PORT, "0.0.0.0", () => {
+  server.listen(PORT, "0.0.0.0", () => {
     console.log(`SENTINEL-AI Server running on http://0.0.0.0:${PORT}`);
   });
 }
